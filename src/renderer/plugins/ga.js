@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueAnalytics from 'vue-analytics'
-import config from '@/config/config'
+import config from '@/constants/config'
 import router from '@/router/index'
 
 Vue.use(VueAnalytics, {

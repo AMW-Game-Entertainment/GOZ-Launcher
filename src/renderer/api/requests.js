@@ -2,13 +2,14 @@ import Vue from 'vue'
 import {
   event as gaEvent
 } from 'vue-analytics'
+import config from '@/constants/config'
 
 export default {
   /**
      * Get config
      */
   getConfig () {
-    return Vue.$http.get('/api/v1/config').then(({
+    return Vue.http.get(config.endpoint + '/api/v1/config').then(({
       data
     }) => data)
   },
@@ -16,7 +17,7 @@ export default {
      * Get total online
      */
   getTotalInGameOnline () {
-    return Vue.$http.get('/api/v1/total-online-ingame').then(({
+    return Vue.http.get(config.endpoint + '/api/v1/total-online-ingame').then(({
       data
     }) => {
       // track event

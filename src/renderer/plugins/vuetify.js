@@ -3,7 +3,7 @@ import Vue from 'vue'
 import Vuetify from 'vuetify'
 
 // Load Plugins
-export default Vue.use(Vuetify, {
+Vue.use(Vuetify, {
   iconfont: 'faSvg',
   icon: {
     cancel: 'fa-times-circle',
