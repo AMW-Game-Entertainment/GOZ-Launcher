@@ -20,7 +20,7 @@ const { VueLoaderPlugin } = require('vue-loader')
  * that provide pure *.vue files that need compiling
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/webpack-configurations.html#white-listing-externals
  */
-let whiteListedModules = ['vue']
+let whiteListedModules = ['vue', 'vuetify'];
 
 let rendererConfig = {
   devtool: '#cheap-module-eval-source-map',
@@ -79,8 +79,8 @@ let rendererConfig = {
           options: {
             extractCSS: process.env.NODE_ENV === 'production',
             loaders: {
-              sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax=1&data=@import "./src/renderer/sass/app"',
-              scss: 'vue-style-loader!css-loader!sass-loader?data=@import "./src/renderer/sass/app";',
+              sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax=1&data=@import "@/assets/sass/app"',
+              scss: 'vue-style-loader!css-loader!sass-loader?data=@import "@/assets/sass/app";',
               less: 'vue-style-loader!css-loader!less-loader'
             }
           }
@@ -92,7 +92,7 @@ let rendererConfig = {
           loader: 'url-loader',
           query: {
             limit: 10000,
-            name: 'imgs/[name]--[folder].[ext]'
+            name: 'assets/imgs/[name]--[folder].[ext]'
           }
         }
       },
@@ -101,7 +101,7 @@ let rendererConfig = {
         loader: 'url-loader',
         options: {
           limit: 10000,
-          name: 'media/[name]--[folder].[ext]'
+          name: 'assets/media/[name]--[folder].[ext]'
         }
       },
       {
@@ -110,7 +110,7 @@ let rendererConfig = {
           loader: 'url-loader',
           query: {
             limit: 10000,
-            name: 'fonts/[name]--[folder].[ext]'
+            name: 'assets/fonts/[name]--[folder].[ext]'
           }
         }
       }

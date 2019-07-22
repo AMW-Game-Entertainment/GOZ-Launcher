@@ -63,8 +63,8 @@ let webConfig = {
           options: {
             extractCSS: true,
             loaders: {
-              sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax=1',
-              scss: 'vue-style-loader!css-loader!sass-loader',
+              sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax=1&data=@import "@/assets/sass/app"',
+              scss: 'vue-style-loader!css-loader!sass-loader?data=@import "@/assets/sass/app";',
               less: 'vue-style-loader!css-loader!less-loader'
             }
           }
@@ -76,7 +76,7 @@ let webConfig = {
           loader: 'url-loader',
           query: {
             limit: 10000,
-            name: 'imgs/[name].[ext]'
+            name: 'assets/imgs/[name].[ext]'
           }
         }
       },
@@ -86,7 +86,7 @@ let webConfig = {
           loader: 'url-loader',
           query: {
             limit: 10000,
-            name: 'fonts/[name].[ext]'
+            name: 'assets/fonts/[name].[ext]'
           }
         }
       }
