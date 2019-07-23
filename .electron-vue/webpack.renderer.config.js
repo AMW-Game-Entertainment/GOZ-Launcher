@@ -45,7 +45,7 @@ let rendererConfig = {
       },
       {
         test: /\.scss$/,
-        use: ['vue-style-loader', 'css-loader', 'sass-loader']
+        use: ['vue-style-loader', 'css-loader', 'sass-loader'],
       },
       {
         test: /\.sass$/,
@@ -79,8 +79,8 @@ let rendererConfig = {
           options: {
             extractCSS: process.env.NODE_ENV === 'production',
             loaders: {
-              sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax=1&data=@import "@/assets/sass/app"',
-              scss: 'vue-style-loader!css-loader!sass-loader?data=@import "@/assets/sass/app";',
+              sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax=1&data=@import "./src/renderer/assets/sass/app"',
+              scss: 'vue-style-loader!css-loader!sass-loader?data=@import "./src/renderer/assets/sass/app";',
               less: 'vue-style-loader!css-loader!less-loader'
             }
           }
@@ -144,6 +144,7 @@ let rendererConfig = {
     new webpack.NoEmitOnErrorsPlugin()
   ],
   output: {
+    publicPath: '/',
     filename: '[name].js',
     libraryTarget: 'commonjs2',
     path: path.join(__dirname, '../dist/electron')

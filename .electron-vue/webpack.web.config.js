@@ -32,7 +32,7 @@ let webConfig = {
       },
       {
         test: /\.scss$/,
-        use: ['vue-style-loader', 'css-loader', 'sass-loader']
+        use: ['vue-style-loader', 'css-loader', 'sass-loader'],
       },
       {
         test: /\.sass$/,
@@ -63,8 +63,8 @@ let webConfig = {
           options: {
             extractCSS: true,
             loaders: {
-              sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax=1&data=@import "@/assets/sass/app"',
-              scss: 'vue-style-loader!css-loader!sass-loader?data=@import "@/assets/sass/app";',
+              sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax=1&data=@import "./src/renderer/assets/sass/app"',
+              scss: 'vue-style-loader!css-loader!sass-loader?data=@import "./src/renderer/assets/sass/app";',
               less: 'vue-style-loader!css-loader!less-loader'
             }
           }
@@ -117,6 +117,7 @@ let webConfig = {
     new webpack.NoEmitOnErrorsPlugin()
   ],
   output: {
+    publicPath: '/',
     filename: '[name].js',
     path: path.join(__dirname, '../dist/web')
   },
