@@ -7,9 +7,4 @@
 @import 'variables';
 @import 'fonts';
 
-// Bootstrap
-@import '../../node_modules/bootstrap/scss/bootstrap.scss';
-// Veutify
-@import '../../node_modules/vuetify/dist/vuetify.min.css'; // Ensure you are using stylus-loader
-
 @import './modules/layout.scss';

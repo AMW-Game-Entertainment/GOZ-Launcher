@@ -16,6 +16,8 @@ import {fal} from '@fortawesome/pro-light-svg-icons'
 import {
   FontAwesomeIcon
 } from '@fortawesome/vue-fontawesome'
+import 'vuetify/dist/vuetify.min.css'
+import 'bootstrap/scss/bootstrap.scss'
 
 library.add(fas, far, fal) // Include needed icons.
 

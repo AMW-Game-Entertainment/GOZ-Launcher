@@ -1,0 +1,43 @@
+html, body { 
+    overflow: hidden!important; 
+}
+
+body {
+    background-image: url('/static/imgs/background.png')!important;
+    background-color: $body-bg!important;
+    background-position: center center;
+    background-size: 100% 100% !important;
+
+    .application {
+        background: $body-bg!important;
+    }
+}
+
+
+.launcher {
+    &-layout{
+        margin-top: 1.75rem!important;
+    }
+    &-brwoser-container{
+        height: 33.5rem;
+    }
+    &-progress-list{
+        width: 64.3%;
+    }
+    &-options-container{
+        width: 8%;
+    }
+    &-controls-container {
+        // height: 5.7rem;
+        // margin-top: 0.9rem!important;
+    }
+    &-status-container{
+
+    }
+    &-online-container{
+
+    }
+    &-copyrights-container{
+
+    }
+}
