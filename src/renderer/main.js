@@ -36,9 +36,6 @@ Vue.component('font-awesome-icon', FontAwesomeIcon)
 const onLoad = new OnLoad()
 export const app = onLoad
   .initApp()
-  .then(() => {
-    setInterval(() => onLoad.refresh(), 8000)
-  })
   .then(() =>
     new Vue({
       components: { App },
