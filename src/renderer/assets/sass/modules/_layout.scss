@@ -3,41 +3,46 @@ html, body {
 }
 
 body {
-    background-image: url('/static/imgs/background.png')!important;
-    background-color: $body-bg!important;
-    background-position: center center;
-    background-size: 100% 100% !important;
+    //background-image: url('/static/imgs/background.png')!important;
+    //background-color: $body-bg!important;
+    //background-position: center center;
+    //background-size: 100% 100% !important;
 
     .application {
-        background: $body-bg!important;
+        //background: $body-bg!important;
     }
 }
 
 
 .launcher {
     &-layout{
-        margin-top: 1.75rem!important;
+        background-color: $primary;
     }
-    &-brwoser-container{
-        height: 33.5rem;
+    &-avatar,
+    &-header,
+    &-webview,
+    &-online,
+    &-copyrights,
+    &-progress-list,
+    &-options{
+        background-color: transparent!important;
     }
-    &-progress-list{
-        width: 64.3%;
+    &-controls-container,
+    &-status-container {
+        background-color: $primary!important;
     }
-    &-options-container{
-        width: 8%;
+    &-center{
+        height: 37.4rem;
     }
-    &-controls-container {
-        // height: 5.7rem;
-        // margin-top: 0.9rem!important;
+    &-webivew{
+        overflow: auto;
+        overflow-y: hidden;
     }
-    &-status-container{
-
+    &-header{
+        background-color: $default!important;
     }
-    &-online-container{
-
-    }
-    &-copyrights-container{
-
+    &-downloading-progress,
+    &-checking-progress{
+        margin: .4rem 0.1rem!important;
     }
 }
