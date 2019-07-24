@@ -1,15 +1,5 @@
 const state = {
   config: {
-    payments: {
-      cost: [],
-      statuses: [],
-      recommended: 0,
-      multiplePointsBy: 0,
-      currency: ''
-    },
-    paygol: {
-      recommended_method: ''
-    },
     gameLauncher: {}
   }
 }
