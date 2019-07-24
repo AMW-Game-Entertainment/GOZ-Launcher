@@ -8,10 +8,9 @@ export default {
       config
     })
   },
-  updateTotalInGameOnline (data) {
+  reset () {
     store.dispatch({
-      type: types.UPDATE_TOTAL_IN_GAME_ONLINE,
-      payload: data
+      type: types.RESET
     })
   }
 }

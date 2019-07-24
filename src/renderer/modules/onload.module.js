@@ -6,6 +6,8 @@ export default class onLoad {
      * init App
      */
   initApp () {
+    actions.reset()
+
     return Promise.all([
       // Get payments config
       Request.getConfig().then((config) => {
