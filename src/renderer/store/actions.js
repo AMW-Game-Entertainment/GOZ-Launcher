@@ -8,6 +8,12 @@ export default {
       config
     })
   },
+  downloadProgress (payload) {
+    store.dispatch({
+      type: types.DOWNLOADING_PROGRESS,
+      payload
+    })
+  },
   reset () {
     store.dispatch({
       type: types.RESET

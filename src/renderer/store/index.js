@@ -12,6 +12,14 @@ Vue.use(Vuex)
 const initialState = () => ({
   config: {
     gameLauncher: {}
+  },
+  progress: {
+    downloading: {
+      at: 0,
+      filePath: '',
+      error: false,
+      done: false
+    }
   }
 })
 
@@ -23,6 +31,15 @@ export default new Vuex.Store({
     }) {
       state.config = config
     },
+    downloadProgress(state, {
+      payload: {
+        at, filePath, error, done
+      }
+    }) {
+      state.progress.downloading = {
+        at, filePath, error, done
+      }
+    },
     reset(state) {
       // acquire initial state
       state = initialState()
@@ -31,6 +48,9 @@ export default new Vuex.Store({
   actions: {
     updateConfig(context, payload) {
       context.commit('updateConfig', payload)
+    },
+    downloadProgress(context, payload) {
+      context.commit('downloadProgress', payload)
     },
     reset(context, payload) {
       context.commit('reset', payload)

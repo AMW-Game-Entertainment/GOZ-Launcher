@@ -31,13 +31,13 @@
             <v-layout row ml-1 mr-1>
               <v-flex xs12 sm12 md12 lg12 align-center text-left>
                 <div class="caption white--text">
-                  Downloading...
-                  <strong>{{ Math.ceil(downloadingProgress) }}%</strong>
+                  {{ downloadingLabel }}
+                  <strong>{{ downloadingProgress.at > 0 ? `${Math.ceil(downloadingProgress.at)}%` : '' }}</strong>
                 </div>
               </v-flex>
             </v-layout>
             <v-progress-linear
-              :value="downloadingProgress"
+              :value="Math.ceil(downloadingProgress.at)"
               height="5"
               color="accent"
               striped
@@ -64,23 +64,37 @@ import fs from 'fs'
 import { fromFile as fromFileHash } from 'hasha'
 import { basename, join } from 'path'
 import requests from '@/api/requests'
-import { getConfig } from '@/store/selectors'
+import { getConfig, getDownloadingProgress } from '@/store/selectors'
 import config from '@/constants/config'
+import actions from '@/store/actions'
 
 export default {
   name: 'launcher',
   data: () => ({
     checkingProgress: 5,
-    downloadingProgress: 5,
     filesToBeDownloaded: [],
     filesOnServer: [],
     filesOnLocal: []
   }),
   computed: {
-    mainSite: () => config.mainSite,
     ...mapState({
-      config: (state) => getConfig(state, 'gameLauncher')
-    })
+      config: (state) => getConfig(state, 'gameLauncher'),
+      downloadingProgress: (state) => getDownloadingProgress(state)
+    }),
+    downloadingLabel() {
+      if (this.downloadingProgress.at === 0) {
+        return `--`
+      }
+      if (this.downloadingProgress.error) {
+        this.DownloadFiles()
+        return `Unable to download the file...`
+      } else if (this.downloadingProgress.done) {
+        this.DownloadFiles()
+        return `Completed`
+      }
+      return `Downloading...${this.downloadingProgress.filePath}`
+    },
+    mainSite: () => config.mainSite
   },
   methods: {
     /**
@@ -100,8 +114,9 @@ export default {
         // Compare file with local files
         .then((localFiles) => {
           this.filesOnLocal.push(localFiles)
-          this.CompareFilesWithLocal()
+          return this.CompareFilesWithLocal()
         })
+        .then(() => this.DownloadFiles())
     },
     /**
      * Get server files list that are allowed to be downloaded
@@ -117,8 +132,9 @@ export default {
               const filePath = fileAndFile.split(',')[0]
               const sum = fileAndFile.split(',')[1]
               return {
-                file: basename(filePath),
-                path: `${config.launcherFilesEndpoint}${filePath}`,
+                pathToFile: filePath,
+                fileName: basename(filePath),
+                urlPath: `${config.launcherFilesEndpoint}${filePath}`,
                 sum
               }
             })
@@ -137,7 +153,7 @@ export default {
      */
     ServerFileInfo(filePath) {
       return this.filesOnServer
-        .find((fileInfo) => fileInfo.file === filePath) || {}
+        .find((fileInfo) => fileInfo.pathToFile === filePath) || {}
     },
     /**
      * Get folder and files
@@ -162,9 +178,8 @@ export default {
       // check if any files
       if (this.filesOnLocal[0].length) {
         // each file
-        this.filesOnLocal[0].forEach((file) => {
+        await this.filesOnLocal[0].forEach((file) => {
           const fullPath = `${config.appGameClientPath}\\${file}`
-          console.log(file, fullPath)
           // get our current file from svr obj
           const fileInfo = this.ServerFileInfo(file)
           // extract sum
@@ -191,6 +206,60 @@ export default {
             }
           }
         })
+      }
+    },
+    DownloadFiles() {
+      if (this.filesToBeDownloaded.length) {
+        let downloaded = 0
+        const fileInfo = this.filesToBeDownloaded[0]
+        const pathToLocal = `${config.appGameClientPath}\\${fileInfo.filePath}`
+        actions.downloadProgress({
+          at: downloaded,
+          filePath: fileInfo.filePath,
+          error: false,
+          done: false
+        })
+        requests.downloadAsStream(fileInfo.urlPath, pathToLocal)
+          .then((response) => {
+            response.data.pipe(fs.createWriteStream(pathToLocal))
+            // const totalSize = (response.headers['content-length'] * 100) / 100
+            response.data.on('data', (data) => {
+              downloaded += (Buffer.byteLength(data) * 100) / 100
+              actions.downloadProgress({
+                at: downloaded,
+                fullPath: fileInfo.filePath,
+                error: false,
+                done: false
+              })
+            })
+            response.data.on('end', () => {
+              actions.downloadProgress({
+                at: 100,
+                fullPath: fileInfo.filePath,
+                error: false,
+                done: true
+              })
+              this.filesToBeDownloaded.splice(0, 1)
+            })
+            response.data.on('error', () => {
+              actions.downloadProgress({
+                at: 100,
+                fullPath: fileInfo.filePath,
+                error: true,
+                done: false
+              })
+              this.filesToBeDownloaded.splice(0, 1)
+            })
+          })
+          .catch(() => {
+            actions.downloadProgress({
+              at: 100,
+              fullPath: fileInfo.filePath,
+              error: true,
+              done: false
+            })
+            this.filesToBeDownloaded.splice(0, 1)
+          })
       }
     }
   }
