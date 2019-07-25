@@ -7,5 +7,6 @@ export default {
   endpoint: process.env.API_ENDPOINT,
   mainSite: process.env.MAIN_SITE,
   launcherFilesEndpoint: process.env.LAUNCHER_FILES_ENDPOINT,
-  appPath: process.env.NODE_ENV === 'production' ? remote.app.getAppPath() : resolve(__dirname, '../')
+  appPath: process.env.NODE_ENV === 'production' ? remote.app.getAppPath() : resolve(__dirname, '../'),
+  appGameClientPath: process.env.NODE_ENV === 'production' ? remote.app.getAppPath() + '/client' : resolve(__dirname, '../client')
 }
