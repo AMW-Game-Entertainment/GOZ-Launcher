@@ -92,6 +92,7 @@ export default {
         this.DownloadFiles()
         return `Completed`
       }
+      console.log(this.downloadingProgress)
       return `Downloading...${this.downloadingProgress.filePath}`
     },
     mainSite: () => config.mainSite
@@ -208,58 +209,43 @@ export default {
         })
       }
     },
+    onDownloadProgress(progressEvent) {
+      const progress = progressEvent.loaded // Math.floor((progressEvent.loaded * 100))
+      actions.downloadProgress({
+        at: progress
+      })
+    },
     DownloadFiles() {
       if (this.filesToBeDownloaded.length) {
         let downloaded = 0
         const fileInfo = this.filesToBeDownloaded[0]
-        const pathToLocal = `${config.appGameClientPath}\\${fileInfo.filePath}`
+        const pathToLocal = `${config.appGameClientPath}\\${fileInfo.pathToFile}`
+        console.log(pathToLocal)
         actions.downloadProgress({
           at: downloaded,
-          filePath: fileInfo.filePath,
+          filePath: fileInfo.pathToFile,
           error: false,
           done: false
         })
-        requests.downloadAsStream(fileInfo.urlPath, pathToLocal)
-          .then((response) => {
-            response.data.pipe(fs.createWriteStream(pathToLocal))
-            // const totalSize = (response.headers['content-length'] * 100) / 100
-            response.data.on('data', (data) => {
-              downloaded += (Buffer.byteLength(data) * 100) / 100
-              actions.downloadProgress({
-                at: downloaded,
-                fullPath: fileInfo.filePath,
-                error: false,
-                done: false
-              })
-            })
-            response.data.on('end', () => {
-              actions.downloadProgress({
-                at: 100,
-                fullPath: fileInfo.filePath,
-                error: false,
-                done: true
-              })
-              this.filesToBeDownloaded.splice(0, 1)
-            })
-            response.data.on('error', () => {
-              actions.downloadProgress({
-                at: 100,
-                fullPath: fileInfo.filePath,
-                error: true,
-                done: false
-              })
-              this.filesToBeDownloaded.splice(0, 1)
-            })
+        const response = requests.downloadAsStream(fileInfo.urlPath, this.onDownloadProgress)
+        console.log('res', response.data)
+        response.data.pipe(fs.createWriteStream(pathToLocal))
+        response.data.on('finish', () => {
+          actions.downloadProgress({
+            at: 100,
+            error: false,
+            done: true
           })
-          .catch(() => {
-            actions.downloadProgress({
-              at: 100,
-              fullPath: fileInfo.filePath,
-              error: true,
-              done: false
-            })
-            this.filesToBeDownloaded.splice(0, 1)
+          this.filesToBeDownloaded.splice(0, 1)
+        })
+        response.data.on('error', () => {
+          actions.downloadProgress({
+            at: 100,
+            error: true,
+            done: false
           })
+          this.filesToBeDownloaded.splice(0, 1)
+        })
       }
     }
   }

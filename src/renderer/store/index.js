@@ -32,12 +32,11 @@ export default new Vuex.Store({
       state.config = config
     },
     downloadProgress(state, {
-      payload: {
-        at, filePath, error, done
-      }
+      payload
     }) {
       state.progress.downloading = {
-        at, filePath, error, done
+        ...state.progress.downloading,
+        ...payload
       }
     },
     reset(state) {

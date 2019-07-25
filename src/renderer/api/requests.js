@@ -38,9 +38,12 @@ export default {
         return data
       })
   },
-  async downloadAsStream(fileSvrPath) {
-    return Vue.http(fileSvrPath, {
-      responseType: 'stream'
+  downloadAsStream(fileSvrPath, onDownloadProgress) {
+    return Vue.http({
+      url: fileSvrPath,
+      method: 'get',
+      responseType: 'blob',
+      onDownloadProgress
     })
   }
 }
