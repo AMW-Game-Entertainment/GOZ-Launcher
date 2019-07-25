@@ -59,12 +59,10 @@
 </template>
 
 <script>
-// import Vue from 'vue'
 import { mapState } from 'vuex'
 import fs from 'fs'
-import { basename } from 'path'
-import walkdir from 'walkdir'
-import crypto from 'crypto'
+import { fromFile as fromFileHash } from 'hasha'
+import { basename, join } from 'path'
 import requests from '@/api/requests'
 import { getConfig } from '@/store/selectors'
 import config from '@/constants/config'
@@ -85,6 +83,9 @@ export default {
     })
   },
   methods: {
+    /**
+     * On play btn clicked
+     */
     onPlay() {
       // First get svr files that can be downloaded
       this.getServerFiles()
@@ -92,8 +93,19 @@ export default {
           this.filesOnServer = files
           this.filesToBeDownloaded = files
         })
-        .then(() => this.CompareFilesWithLocal())
+        // Get local files
+        .then(() => {
+          return this.refatorFilesPath(this.getFilePaths(config.appGameClientPath))
+        })
+        // Compare file with local files
+        .then((localFiles) => {
+          this.filesOnLocal.push(localFiles)
+          this.CompareFilesWithLocal()
+        })
     },
+    /**
+     * Get server files list that are allowed to be downloaded
+     */
     getServerFiles() {
       return requests
         .getDownloadList(this.config.checkHashshUrl)
@@ -112,33 +124,72 @@ export default {
             })
         })
     },
-    Compare(filePath, sum) {
-      const localFileStream = fs.createReadStream(filePath)
-      const hash = crypto.createHmac('sha1')
-      hash.setEncoding('hex')
-      localFileStream.on('end', () => {
-        hash.end()
-        hash.read()
-      })
-      return localFileStream.pipe(hash) === sum
+    /**
+     * Compare the hashsum between local and svr file
+     */
+    async Compare(filePath, sum) {
+      return {
+        valid: await fromFileHash(filePath, {algorithm: 'sha1'}) === sum
+      }
     },
-    fromServer(filePath) {
-      const fileName = basename(filePath)
+    /**
+     * From server get file info
+     */
+    ServerFileInfo(filePath) {
       return this.filesOnServer
-        .find((fileInfo) => fileInfo.file === fileName)
+        .find((fileInfo) => fileInfo.file === filePath) || {}
     },
+    /**
+     * Get folder and files
+     */
+    getFilePaths(folderPath) {
+      const entryPaths = fs.readdirSync(folderPath).map((entry) => join(folderPath, entry))
+      const filePaths = entryPaths.filter((entryPath) => fs.statSync(entryPath).isFile())
+      const dirPaths = entryPaths.filter((entryPath) => !filePaths.includes(entryPath))
+      const dirFiles = dirPaths.reduce((prev, curr) => prev.concat(this.getFilePaths(curr)), [])
+      return [...filePaths, ...dirFiles, ...dirPaths]
+    },
+    /**
+     * Refactor the files path
+     */
+    refatorFilesPath(files) {
+      return files.map((path) => path.replace(`${config.appGameClientPath}\\`, '', path))
+    },
+    /**
+     * Compare server files with local files
+     */
     async CompareFilesWithLocal() {
-      const clientPath = `${config.appPath}\\client`
-      this.filesOnLocal.push(await walkdir.async(clientPath))
+      // check if any files
       if (this.filesOnLocal[0].length) {
+        // each file
         this.filesOnLocal[0].forEach((file) => {
-          console.log(file)
-          const fileInfo = this.fromServer(file)
-          console.log(this.Compare(file, fileInfo.sum))
-          if (fileInfo && this.Compare(file, fileInfo.sum)) {
-            this.filesToBeDownloaded.splice(this.filesToBeDownloaded.indexOf(fileInfo), 1)
+          const fullPath = `${config.appGameClientPath}\\${file}`
+          console.log(file, fullPath)
+          // get our current file from svr obj
+          const fileInfo = this.ServerFileInfo(file)
+          // extract sum
+          const { sum } = fileInfo
+          // if sum exist
+          if (sum) {
+            // comparing the hash of current local file with file on svr
+            this.Compare(fullPath, sum).then(({ valid }) => {
+              // than check if valid - means up to date
+              if (valid) {
+                // than remove it from downloadable files list
+                this.filesToBeDownloaded.splice(this.filesToBeDownloaded.indexOf(fileInfo), 1)
+              }
+            })
+          // else means this file is deprecated and must be deleted
+          } else {
+            // get the stat to know if deleteing a dir or file
+            const fileStat = fs.lstatSync(fullPath)
+            // delete this local file/dir
+            if (fileStat.isDirectory()) {
+              fs.rmdirSync(fullPath)
+            } else if (fileStat.isFile()) {
+              fs.unlinkSync(fullPath)
+            }
           }
-          console.log(this.filesToBeDownloaded.length, this.filesToBeDownloaded.indexOf(fileInfo))
         })
       }
     }
