@@ -40,7 +40,8 @@
     "vue-router": "^3.0.1",
     "vuetify": "^1.5.16",
     "vuex": "^3.0.1",
-    "vuex-electron": "^1.0.0"
+    "vuex-electron": "^1.0.0",
+    "walkdir": "^0.4.1"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.19",

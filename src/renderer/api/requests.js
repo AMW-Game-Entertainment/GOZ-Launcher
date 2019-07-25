@@ -24,5 +24,16 @@ export default {
       gaEvent('game-users', 'total-online', 'amount', data.totalOnline)
       return data
     })
+  },
+  /**
+     * Get downloads list
+     */
+  getDownloadList (url) {
+    return Vue.http.get(url)
+      .then(({ data }) => {
+      // track event
+        gaEvent('downloads', 'launcher-files', 'list', data)
+        return data
+      })
   }
 }
