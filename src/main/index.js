@@ -1,8 +1,7 @@
 'use strict'
 
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import '../renderer/store'
-
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -33,6 +32,13 @@ function createWindow () {
   })
 
   mainWindow.loadURL(winURL)
+
+  ipcMain.on('download', (event, arg) => {
+    // axios download code here
+    event.sender('downloaded', {
+      event, arg
+    })
+  })
 
   mainWindow.on('closed', () => {
     mainWindow = null

@@ -13,7 +13,7 @@
               <v-flex xs6 sm6 md6 lg6 align-center text-left>
                 <div class="caption white--text">
                   Checking...
-                  <strong>{{ Math.ceil(checkingProgress) }}%</strong>
+                  <strong>{{ checkingProgress }}%</strong>
                 </div>
               </v-flex>
               <v-flex xs6 sm6 md6 lg6 align-center text-right>
@@ -32,7 +32,6 @@
               <v-flex xs12 sm12 md12 lg12 align-center text-left>
                 <div class="caption white--text">
                   {{ downloadingLabel }}
-                  <strong>{{ downloadingProgress.at > 0 ? `${Math.ceil(downloadingProgress.at)}%` : '' }}</strong>
                 </div>
               </v-flex>
             </v-layout>
@@ -64,41 +63,27 @@ import fs from 'fs'
 import { fromFile as fromFileHash } from 'hasha'
 import { basename, join } from 'path'
 import requests from '@/api/requests'
-import { getConfig } from '@/store/selectors'
+import { getConfig, getDownloadingProgress } from '@/store/selectors'
 import config from '@/constants/config'
+import actions from '@/store/actions'
+import ProgressUtil from '@/utils/Progress.utils'
+import { ipcRenderer } from 'electron'
 
 export default {
   name: 'launcher',
+  provide: ['$electron'],
   data: () => ({
     checkingProgress: 5,
-    downloadingProgress: {
-      at: 0,
-      filePath: '',
-      error: false,
-      done: false
-    },
     filesToBeDownloaded: [],
     filesOnServer: [],
-    filesOnLocal: []
+    filesOnLocal: [],
+    downloadingLabel: ''
   }),
   computed: {
     ...mapState({
-      config: (state) => getConfig(state, 'gameLauncher')
+      config: (state) => getConfig(state, 'gameLauncher'),
+      downloadingProgress: (state) => getDownloadingProgress(state)
     }),
-    downloadingLabel() {
-      console.log(this.downloadingProgress.at, this.downloadingProgress.error, this.downloadingProgress.done, this.downloadingProgress.filePath)
-      // if (this.downloadingProgress.at === 0) {
-      //   return `--`
-      // }
-      if (this.downloadingProgress.error) {
-        this.DownloadFiles()
-        return `Unable to download the file...`
-      } else if (this.downloadingProgress.done) {
-        this.DownloadFiles()
-        return `Completed`
-      }
-      return `Downloading...${this.downloadingProgress.filePath}`
-    },
     mainSite: () => config.mainSite
   },
   methods: {
@@ -228,62 +213,62 @@ export default {
         })
       }
     },
+    /**
+     * Download files from the list, one at a time
+     */
     DownloadFiles() {
       if (this.filesToBeDownloaded.length) {
+        let currentProgress = 0
         const fileInfo = this.filesToBeDownloaded[0]
         const pathToLocal = join(config.appGameClientPath, fileInfo.pathToFile)
-        requests.downloadAsStream(fileInfo.urlPath)
-          .on('progress', (state) => {
-            // The state is an object that looks like this:
-            // {
-            //     percent: 0.5,               // Overall percent (between 0 to 1)
-            //     speed: 554732,              // The download speed in bytes/sec
-            //     size: {
-            //         total: 90044871,        // The total payload size in bytes
-            //         transferred: 27610959   // The transferred payload size in bytes
-            //     },
-            //     time: {
-            //         elapsed: 36.235,        // The total elapsed seconds since the start (3 decimals)
-            //         remaining: 81.403       // The remaining seconds to finish (3 decimals)
-            //     }
-            // }
-            this.downloadingProgress = {
-              ...this.downloadingProgress,
-              at: Math.floor((state.size.transferred * 100) / state.size.total),
-              error: false,
-              done: false
-            }
+        actions.downloadProgress({
+          filePath: fileInfo.pathToFile,
+          at: currentProgress,
+          error: false,
+          done: false
+        })
+        const onDownloadProgress = (progressEvent) => {
+          const percentage = ProgressUtil.toPercentage(progressEvent.loaded, progressEvent.total)
+          this.downloadingLabel = `Downloading...${fileInfo.pathToFile} | ${percentage}%`
+          actions.downloadProgress({
+            at: percentage
           })
-          .on('finish', () => {
-            this.downloadingProgress = {
-              ...this.downloadingProgress,
-              at: 0,
-              error: false,
-              done: true
-            }
-            this.filesToBeDownloaded.splice(0, 1)
-          })
-          .on('end', () => {
-            this.downloadingProgress = {
-              ...this.downloadingProgress,
-              at: 0,
-              error: false,
-              done: true
-            }
-            this.filesToBeDownloaded.splice(0, 1)
-          })
-          .pipe(fs.createWriteStream(pathToLocal, {
-            flags: 'w+'
-          }))
-          .on('error', () => {
-            this.downloadingProgress = {
-              ...this.downloadingProgress,
-              at: 0,
-              error: true,
-              done: false
-            }
-            this.filesToBeDownloaded.splice(0, 1)
-          })
+        }
+        ipcRenderer.send('download', {
+          urlPath: fileInfo.urlPath,
+          pathToLocal,
+          onDownloadProgress
+        })
+        ipcRenderer.on('downloaded', (event, data) => {
+          console.log(event, data)
+        })
+        // console.log(this.$electron.remote.app)
+        // requests.downloadAsStream(fileInfo.urlPath, onDownloadProgress)
+        //   .then((res) => {
+        //     res.data.pipe(fs.createWriteStream(pathToLocal))
+        //     this.downloadingLabel = `${this.downloadingProgress.filePath} Completed`
+        //     currentProgress = 0
+        //     actions.downloadProgress({
+        //       at: 100,
+        //       error: false,
+        //       done: true
+        //     })
+        //     this.filesToBeDownloaded.splice(0, 1)
+        //     // download next file
+        //     setTimeout(() => this.DownloadFiles(), 500)
+        //   })
+        //   .catch((error) => {
+        //     console.log(error)
+        //     this.downloadingLabel = `Unable to download ${this.downloadingProgress.filePath}...`
+        //     actions.downloadProgress({
+        //       at: 0,
+        //       error: true,
+        //       done: false
+        //     })
+        //     this.filesToBeDownloaded.splice(0, 1)
+        //     // download next file
+        //     setTimeout(() => this.DownloadFiles(), 500)
+        //   })
       }
     }
   }

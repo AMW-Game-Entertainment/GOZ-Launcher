@@ -1,6 +1,5 @@
 import axios from 'axios'
-import request from 'request'
-import progress from 'request-progress'
+import adapter from 'axios/lib/adapters/xhr'
 import {
   event as gaEvent
 } from 'vue-analytics'
@@ -40,14 +39,11 @@ export default {
         return data
       })
   },
-  downloadAsStream(fileSvrPath) {
-    // eslint-disable-next-line no-return-await
-    return progress(request.get(fileSvrPath, {
-      /* GZIP true for most of the websites now, disable it if you don't need it */
-      gzip: true
-    }), {
-      throttle: 60000, // Throttle the progress event, defaults to 1000ms
-      delay: 0 // Only start to emit after a delay of some milliseconds - default is 0ms
+  downloadAsStream(fileSvrPath, onDownloadProgress) {
+    return axios.get(fileSvrPath, {
+      onDownloadProgress,
+      responseType: 'stream',
+      adapter
     })
   }
 }
