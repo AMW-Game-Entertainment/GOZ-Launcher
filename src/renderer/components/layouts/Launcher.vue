@@ -183,15 +183,16 @@ export default {
      * Check if dirs exist, if not create
      */
     CheckNotExistingDir() {
-      this.filesOnServer.map((fileInfo) => {
-        console.log(fileInfo)
+      this.filesOnServer.forEach((fileInfo) => {
+        // get path
         const fileFullPath = join(config.appGameClientPath, fileInfo.pathToFile)
+        // get dir
         const dir = fileFullPath.replace(basename(fileFullPath), '', fileFullPath)
-        console.log(dir, fileFullPath)
+        // check if found dir and doesnt exist
         if (dir && !fs.existsSync(dir)) {
+          // create
           fs.mkdirSync(dir)
         }
-        return fileInfo
       })
     },
     /**
@@ -219,14 +220,12 @@ export default {
             })
           // else means this file is deprecated and must be deleted
           } else {
-            // // get the stat to know if deleteing a dir or file
-            // const fileStat = fs.lstatSync(fullPath)
-            // // delete this local file/dir
-            // if (fileStat.isDirectory()) {
-            //   fs.rmdirSync(fullPath)
-            // } else if (fileStat.isFile()) {
-            //   fs.unlinkSync(fullPath)
-            // }
+            // get the stat to know if deleteing file
+            const fileStat = fs.lstatSync(fullPath)
+            // delete this local file/
+            if (fileStat.isFile()) {
+              fs.unlinkSync(fullPath)
+            }
           }
         })
       }
