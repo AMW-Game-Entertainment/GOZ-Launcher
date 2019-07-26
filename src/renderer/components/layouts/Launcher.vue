@@ -86,7 +86,7 @@ export default {
       config: (state) => getConfig(state, 'gameLauncher')
     }),
     downloadingLabel() {
-      console.log(this.downloadingProgress.at)
+      console.log(this.downloadingProgress.at, this.downloadingProgress.error, this.downloadingProgress.done, this.downloadingProgress.filePath)
       // if (this.downloadingProgress.at === 0) {
       //   return `--`
       // }
@@ -97,7 +97,6 @@ export default {
         this.DownloadFiles()
         return `Completed`
       }
-      console.log(this.downloadingProgress)
       return `Downloading...${this.downloadingProgress.filePath}`
     },
     mainSite: () => config.mainSite
@@ -176,7 +175,6 @@ export default {
      * Refactor the files path
      */
     refatorFilesPath(files) {
-      console.log(files)
       return files.map((path) => path.replace(`${config.appGameClientPath}\\`, '', path))
     },
     /**
@@ -234,7 +232,6 @@ export default {
       if (this.filesToBeDownloaded.length) {
         const fileInfo = this.filesToBeDownloaded[0]
         const pathToLocal = join(config.appGameClientPath, fileInfo.pathToFile)
-        console.log(pathToLocal)
         requests.downloadAsStream(fileInfo.urlPath)
           .on('progress', (state) => {
             // The state is an object that looks like this:
@@ -256,7 +253,6 @@ export default {
               error: false,
               done: false
             }
-            console.log('progress', state)
           })
           .on('finish', () => {
             this.downloadingProgress = {
