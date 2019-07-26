@@ -1,0 +1,1067 @@
+/************************************************************************
+**
+**		表面纹理（材质）属性对应的脚步声效
+**   添加方法：
+**   1. 拷贝一分现有的表面纹理属性对应的脚步声效；
+**   2. 修改字段：
+**      [Surface0] 改为 [Surface#]
+**      Name = "XXX"
+**      Id = #
+**      RtFootSnd1-2 ="脚步声音文件路径"
+**      LtFootSnd1-2 ="脚步声音文件路径"
+**
+** This file contains the following surface related definitions:
+**
+**	Global
+**  Surface
+**
+**
+** NOTES:  
+**
+** 	TEXTURE ID SUMMARY:
+** 
+**  ----Internal ID's----
+**	
+**   0 = Unknown
+**   1 = Air
+**   2 = Flesh
+**   3 = Armor (human)
+** 110 = Sky
+** 200 = Ladder
+** 201 = Liquid
+** 202 = Invisible
+**
+**  ----Custom ID's----//在此添加自定义纹理ID注释
+**
+**
+**
+** ----For sword deflects-----
+**
+** 210 = Sword_Deflect: Don't use elsewhere...
+**
+**
+**
+*/
+
+
+/************************************************************************
+**
+** GLOBAL
+** The global definition defines values that are global to all surfaces.
+**
+*/
+
+[Global]
+
+/************************************************************************
+**
+**  Name (String)
+**
+**      表面材质名称 (和DEdit中显示的材质文件名一致).
+**
+**  Id (Integer)
+**
+**      对应的表面材质ID 
+**      取值范围：0——255
+**      其中( 0, 1, 2, 3, 110, 200, 201 ， 202)已经被定义过了，新的材质ID不可以取这些值
+**
+**	RtFootSnd1-2 (String)
+**
+**		右脚声效
+**
+**	LtFootSnd1-2 (String)
+**
+**		左脚声效
+**
+**   需求功能实现 ；
+**   1. 分左右脚固定顺序——右脚声效的两个文件名要相同，且左脚声效的两个文件名也要相同
+**   2. 随机选取播放——上述四个文件名可以不相同
+*/
+
+
+////////////////////////////////////////////////////////////////////////////
+// FOLLOWING ARE THE PRE-DEFINED SURFACES - DO NOT MODIFY THESE!!!! -
+//
+
+/*
+**  Surface0 - UNKNOWN
+*/
+
+[Surface0]
+
+Name						= "Unknown"
+Id							= 0
+ShowsMark					= 1
+ShowBreath					= 0
+CanSeeThrough				= 0
+CanShootThrough				= 0
+MaxShootThroughPerturb		= 0
+MaxShootThroughThickness	= 0
+BulletHoleSpr				= "FX\Test\IMarkBasic.spr"
+BulletHoleMinScale			= 0.800000
+BulletHoleMaxScale			= 1.500000
+BulletRangeDampen			= 1.000000
+BulletDamageDampen			= 1.000000
+BulletImpactSnd1			= "Guns\Snd\impacts\stone\impact1.wav"
+BulletImpactSnd2			= "Guns\Snd\impacts\stone\impact2.wav"
+ProjectileImpactSnd1		= "Guns\Snd\impacts\projectile\stone\impact1.wav"
+ProjectileImpactSnd2		= "Guns\Snd\impacts\projectile\stone\impact2.wav"
+MeleeImpactSnd1				= "Guns\Snd\impacts\melee\gen\impact1.wav"
+MeleeImpactSnd2				= "Guns\Snd\impacts\melee\gen\impact2.wav"
+ShellImpactSnd1				= "Guns\Snd\Shells\stone.wav"
+ShellSndRadius				= 200.0
+GrenadeImpactSnd			= "Guns\Snd\Impacts\stone\impactgrenade.wav"
+GrenadeSndRadius			= 1000.0
+RtFootPrintSpr				= ""
+LtFootPrintSpr				= ""
+FootPrintLifetime			= 10.0
+FootPrintScale				= <1.0, 1.0, 1.0>
+RtFootSnd1					= "Snd\footsteps_brick01a.wav"
+LtFootSnd1					= "Snd\footsteps_brick01b.wav"
+RtFootSnd2					= "Snd\footsteps_brick02a.wav"
+LtFootSnd2					= "Snd\footsteps_brick02b.wav"
+SnowmobileSnd1				= ""
+SnowmobileSnd2				= ""
+BodyFallSnd					= "Chars\Snd\FemaleBodyFall_Ground.wav"
+BodyFallSndRadius			= 800.000000
+BodyLedgeFallSnd			= "Chars\Snd\MaleBodyFall_Ground.wav"
+BodyLedgeFallSndRadius		= 1200.000000
+ActivationSnd				= ""
+ActivationSndRadius			= 0.000000
+DeathNoiseMod				= 1.000000
+MoveNoiseMod				= 2.000000
+ImpactNoiseMod				= 2.000000
+Hardness					= 0.65
+SnowmobileVelMult			= 1.0
+Magnetic					= 0
+ImpactFXName				= ""
+UWImpactFXName				= ""
+ExitFXName					= ""
+UWExitFXName				= ""
+
+
+/*
+**  Surface1 - AIR
+*/
+
+[Surface1]
+
+Name						= "Air"
+Id							= 1
+ShowsMark					= 0
+ShowBreath					= 0
+CanSeeThrough				= 1
+CanShootThrough				= 0
+MaxShootThroughPerturb		= 0
+MaxShootThroughThickness	= 0
+BulletHoleSpr				= ""
+BulletHoleMinScale			= 1.000000
+BulletHoleMaxScale			= 1.000000
+BulletRangeDampen			= 1.000000
+BulletDamageDampen			= 1.000000
+BulletImpactSnd1			= ""
+BulletImpactSnd2			= ""
+ProjectileImpactSnd1		= ""
+ProjectileImpactSnd2		= ""
+MeleeImpactSnd1				= ""
+MeleeImpactSnd2				= ""
+ShellImpactSnd1				= ""
+ShellSndRadius				= 0.0
+GrenadeImpactSnd			= ""
+GrenadeSndRadius			= 0.0
+RtFootPrintSpr				= ""
+LtFootPrintSpr				= ""
+FootPrintLifetime			= 10.0
+FootPrintScale				= <1.0, 1.0, 1.0>
+RtFootSnd1					= ""
+LtFootSnd1					= ""
+RtFootSnd2					= ""
+LtFootSnd2					= ""
+SnowmobileSnd1				= ""
+SnowmobileSnd2				= ""
+BodyFallSnd					= ""
+BodyFallSndRadius			= 0
+BodyLedgeFallSnd			= ""
+BodyLedgeFallSndRadius		= 0
+ActivationSnd				= ""
+ActivationSndRadius			= 0.000000
+DeathNoiseMod				= 0.000000
+MoveNoiseMod				= 0.000000
+ImpactNoiseMod				= 0.000000
+Hardness					= 0.0
+SnowmobileVelMult			= 1.0
+Magnetic					= 0
+ImpactFXName				= ""
+UWImpactFXName				= ""
+ExitFXName					= ""
+UWExitFXName				= ""
+
+/*
+**  Surface2 - FLESH
+*/
+
+[Surface2]
+
+Name						= "Flesh"
+Id							= 2
+ShowsMark					= 0
+ShowBreath					= 0
+CanSeeThrough				= 0
+CanShootThrough				= 0
+MaxShootThroughPerturb		= 0
+MaxShootThroughThickness	= 0
+BulletHoleSpr				= ""
+BulletHoleMinScale			= 0.800000
+BulletHoleMaxScale			= 1.500000
+BulletRangeDampen			= 1.000000
+BulletDamageDampen			= 1.000000
+BulletImpactSnd1			= "Guns\Snd\impacts\flesh\impact1.wav"
+BulletImpactSnd2			= "Guns\Snd\impacts\flesh\impact2.wav"
+ProjectileImpactSnd1		= "Guns\Snd\impacts\projectile\flesh\impact1.wav"
+ProjectileImpactSnd2		= "Guns\Snd\impacts\projectile\flesh\impact2.wav"
+MeleeImpactSnd1				= "Guns\Snd\impacts\melee\flesh\impact1.wav"
+MeleeImpactSnd2				= "Guns\Snd\impacts\melee\flesh\impact2.wav"
+ShellImpactSnd1				= ""
+ShellSndRadius				= 200.0
+GrenadeImpactSnd			= ""
+GrenadeSndRadius			= 1000.0
+RtFootPrintSpr				= ""
+LtFootPrintSpr				= ""
+FootPrintLifetime			= 10.0
+FootPrintScale				= <1.0, 1.0, 1.0>
+RtFootSnd1					= ""
+LtFootSnd1					= ""
+RtFootSnd2					= ""
+LtFootSnd2					= ""
+SnowmobileSnd1				= ""
+SnowmobileSnd2				= ""
+BodyFallSnd					= ""
+BodyFallSndRadius			= 0.0
+BodyLedgeFallSnd			= ""
+BodyLedgeFallSndRadius		= 0.0
+ActivationSnd				= ""
+ActivationSndRadius			= 0.000000
+DeathNoiseMod				= 0.000000
+MoveNoiseMod				= 0.000000
+ImpactNoiseMod				= 0.000000
+Hardness					= 0.35
+SnowmobileVelMult			= 1.0
+Magnetic					= 0
+ImpactFXName				= "Impact_Flesh"
+UWImpactFXName				= "Impact_Flesh"
+ExitFXName					= ""
+UWExitFXName				= ""
+SnowmobileImpactFXName		= "SnowmobileImpact_Flesh"
+
+
+/*
+**  Surface3 - ARMOR
+*/
+
+[Surface3]
+
+Name						= "Armor"
+Id							= 3
+ShowsMark					= 0
+ShowBreath					= 0
+CanSeeThrough				= 0
+CanShootThrough				= 0
+MaxShootThroughPerturb		= 0
+MaxShootThroughThickness	= 0
+BulletHoleSpr				= ""
+BulletHoleMinScale			= 0.800000
+BulletHoleMaxScale			= 1.500000
+BulletRangeDampen			= 1.000000
+BulletDamageDampen			= 1.000000
+BulletImpactSnd1			= "Guns\Snd\impacts\cloth\impact1.wav"
+BulletImpactSnd2			= "Guns\Snd\impacts\cloth\impact2.wav"
+ProjectileImpactSnd1		= "Guns\Snd\impacts\projectile\cloth\impact1.wav"
+ProjectileImpactSnd2		= "Guns\Snd\impacts\projectile\cloth\impact2.wav"
+MeleeImpactSnd1				= "Guns\Snd\impacts\melee\gen\impact1.wav"
+MeleeImpactSnd2				= "Guns\Snd\impacts\melee\gen\impact2.wav"
+ShellImpactSnd1				= "Guns\Snd\Shells\cloth.wav"
+ShellSndRadius				= 200.0
+GrenadeImpactSnd			= "Guns\Snd\Impacts\cloth\impactgrenade.wav"
+GrenadeSndRadius			= 1000.0
+RtFootPrintSpr				= ""
+LtFootPrintSpr				= ""
+FootPrintLifetime			= 10.0
+FootPrintScale				= <1.0, 1.0, 1.0>
+RtFootSnd1					= ""
+LtFootSnd1					= ""
+RtFootSnd2					= ""
+LtFootSnd2					= ""
+SnowmobileSnd1				= ""
+SnowmobileSnd2				= ""
+BodyFallSnd					= ""
+BodyFallSndRadius			= 0.0
+BodyLedgeFallSnd			= ""
+BodyLedgeFallSndRadius		= 0.0
+ActivationSnd				= ""
+ActivationSndRadius			= 0.000000
+DeathNoiseMod				= 0.000000
+MoveNoiseMod				= 0.000000
+ImpactNoiseMod				= 0.000000
+Hardness					= 0.35
+SnowmobileVelMult			= 1.0
+Magnetic					= 0
+ImpactFXName				= "Impact_Armor"
+UWImpactFXName				= "Impact_Armor"
+ExitFXName					= ""
+UWExitFXName				= ""
+
+
+/*
+**  Surface4 - SKY
+*/
+
+[Surface4]
+
+Name						= "Sky"
+Id							= 110
+ShowsMark					= 0
+ShowBreath					= 0
+CanSeeThrough				= 0
+CanShootThrough				= 0
+MaxShootThroughPerturb		= 0
+MaxShootThroughThickness	= 0
+BulletHoleSpr				= ""
+BulletHoleMinScale			= 1.000000
+BulletHoleMaxScale			= 1.000000
+BulletRangeDampen			= 1.000000
+BulletDamageDampen			= 1.000000
+BulletImpactSnd1			= ""
+BulletImpactSnd2			= ""
+ProjectileImpactSnd1		= ""
+ProjectileImpactSnd2		= ""
+MeleeImpactSnd1				= ""
+MeleeImpactSnd2				= ""
+ShellImpactSnd1				= ""
+ShellSndRadius				= 0.0
+GrenadeImpactSnd			= ""
+GrenadeSndRadius			= 0.0
+RtFootPrintSpr				= ""
+LtFootPrintSpr				= ""
+FootPrintLifetime			= 10.0
+FootPrintScale				= <1.0, 1.0, 1.0>
+RtFootSnd1					= ""
+LtFootSnd1					= ""
+RtFootSnd2					= ""
+LtFootSnd2					= ""
+SnowmobileSnd1				= ""
+SnowmobileSnd2				= ""
+BodyFallSnd					= ""
+BodyFallSndRadius			= 0
+BodyLedgeFallSnd			= ""
+BodyLedgeFallSndRadius		= 0
+ActivationSnd				= ""
+ActivationSndRadius			= 0.000000
+DeathNoiseMod				= 0.000000
+MoveNoiseMod				= 0.000000
+ImpactNoiseMod				= 0.000000
+Hardness					= 0.0
+SnowmobileVelMult			= 1.0
+Magnetic					= 0
+ImpactFXName				= ""
+UWImpactFXName				= ""
+ExitFXName					= ""
+UWExitFXName				= ""
+
+/*
+**  Surface5 - LADDER
+*/
+
+[Surface5]
+
+Name						= "Ladder"
+Id							= 200
+ShowsMark					= 0
+ShowBreath					= 0
+CanSeeThrough				= 1
+CanShootThrough				= 0
+MaxShootThroughPerturb		= 0
+MaxShootThroughThickness	= 0
+BulletHoleSpr				= ""
+BulletHoleMinScale			= 1.000000
+BulletHoleMaxScale			= 1.000000
+BulletRangeDampen			= 1.000000
+BulletDamageDampen			= 1.000000
+BulletImpactSnd1			= ""
+BulletImpactSnd2			= ""
+ProjectileImpactSnd1		= ""
+ProjectileImpactSnd2		= ""
+MeleeImpactSnd1				= ""
+MeleeImpactSnd2				= ""
+ShellImpactSnd1				= ""
+ShellSndRadius				= 0.0
+GrenadeImpactSnd			= ""
+GrenadeSndRadius			= 0.0
+RtFootPrintSpr				= ""
+LtFootPrintSpr				= ""
+FootPrintLifetime			= 10.0
+FootPrintScale				= <1.0, 1.0, 1.0>
+RtFootSnd1					= "Chars\Snd\Footsteps\ladder1a.wav"
+LtFootSnd1					= "Chars\Snd\Footsteps\ladder1b.wav"
+RtFootSnd2					= "Chars\Snd\Footsteps\ladder2a.wav"
+LtFootSnd2					= "Chars\Snd\Footsteps\ladder2b.wav"
+SnowmobileSnd1				= ""
+SnowmobileSnd2				= ""
+BodyFallSnd					= "Chars\Snd\FemaleBodyFall_Ground.wav"
+BodyFallSndRadius			= 800
+BodyLedgeFallSnd			= "Chars\Snd\MaleBodyFall_Ground.wav"
+BodyLedgeFallSndRadius		= 1200
+ActivationSnd				= ""
+ActivationSndRadius			= 0.000000
+DeathNoiseMod				= 0.000000
+MoveNoiseMod				= 0.000000
+ImpactNoiseMod				= 0.000000
+Hardness					= 0.0
+SnowmobileVelMult			= 1.0
+Magnetic					= 0
+ImpactFXName				= ""
+UWImpactFXName				= ""
+ExitFXName					= ""
+UWExitFXName				= ""
+
+/*
+**  Surface6 - LIQUID
+*/
+
+[Surface6]
+
+Name						= "Liquid"
+Id							= 201
+ShowsMark					= 0
+ShowBreath					= 0
+CanSeeThrough				= 1
+CanShootThrough				= 1
+MaxShootThroughPerturb		= 100
+MaxShootThroughThickness	= 0
+BulletHoleSpr				= ""
+BulletHoleMinScale			= 1.000000
+BulletHoleMaxScale			= 1.000000
+BulletRangeDampen			= 1.000000
+BulletDamageDampen			= 1.000000
+BulletImpactSnd1			= "Guns\Snd\impacts\water\impact1.wav"
+BulletImpactSnd2			= "Guns\Snd\impacts\water\impact2.wav"
+ProjectileImpactSnd1		= "Guns\Snd\impacts\water\impact1.wav"
+ProjectileImpactSnd2		= "Guns\Snd\impacts\water\impact2.wav"
+MeleeImpactSnd1				= "Guns\Snd\impacts\melee\liquid\impact1.wav"
+MeleeImpactSnd2				= "Guns\Snd\impacts\melee\liquid\impact2.wav"
+ShellImpactSnd1				= "Guns\Snd\Shells\liquid.wav"
+ShellSndRadius				= 200.0
+GrenadeImpactSnd			= "guns\snd\banana\liquid.wav"
+GrenadeSndRadius			= 1000.0
+RtFootPrintSpr				= ""
+LtFootPrintSpr				= ""
+FootPrintLifetime			= 10.0
+FootPrintScale				= <1.0, 1.0, 1.0>
+RtFootSnd1					= "Chars\Snd\Footsteps\water1a.wav"
+LtFootSnd1					= "Chars\Snd\Footsteps\water1b.wav"
+RtFootSnd2					= "Chars\Snd\Footsteps\water2a.wav"
+LtFootSnd2					= "Chars\Snd\Footsteps\water2b.wav"
+SnowmobileSnd1				= ""
+SnowmobileSnd2				= ""
+BodyFallSnd					= "Chars\Snd\FemaleBodyFall_Water.wav"
+BodyFallSndRadius			= 800
+BodyLedgeFallSnd			= "Chars\Snd\MaleBodyFall_Water.wav"
+BodyLedgeFallSndRadius		= 1200.000000
+ActivationSnd				= ""
+ActivationSndRadius			= 0.000000
+DeathNoiseMod				= 1.500000
+MoveNoiseMod				= 1.500000
+ImpactNoiseMod				= 0.250000
+Hardness					= 0.1
+SnowmobileVelMult			= 1.0
+Magnetic					= 0
+ImpactFXName				= "Impact_Water"
+UWImpactFXName				= ""
+ExitFXName					= ""
+UWExitFXName				= ""
+
+
+/*
+**  Surface7 - INVISIBLE - This surface is used for invisible textures.
+**	HAS BEEN REVISED FOR THE LAST TIME TO "NO SHOOT THROUGH, NO SEE THROUGH NO MARK"
+*/
+
+[Surface7]
+
+Name						= "Invisible"
+Id							= 202
+ShowsMark					= 0
+ShowBreath					= 0
+CanSeeThrough				= 0
+CanShootThrough				= 0
+MaxShootThroughPerturb		= 0
+MaxShootThroughThickness	= 0
+BulletHoleSpr				= ""
+BulletHoleMinScale			= 0.000000
+BulletHoleMaxScale			= 0.000000
+BulletRangeDampen			= 0.000000
+BulletDamageDampen			= 0.000000
+BulletImpactSnd1			= ""
+BulletImpactSnd2			= ""
+ProjectileImpactSnd1		= ""
+ProjectileImpactSnd2		= ""
+MeleeImpactSnd1				= ""
+MeleeImpactSnd2				= ""
+ShellImpactSnd1				= ""
+ShellSndRadius				= 0.0
+GrenadeImpactSnd			= ""
+GrenadeSndRadius			= 0.0
+RtFootPrintSpr				= ""
+LtFootPrintSpr				= ""
+FootPrintLifetime			= 0	
+FootPrintScale				= <0.0, 0.0, 0.0>
+RtFootSnd1					= ""
+LtFootSnd1					= ""
+RtFootSnd2					= ""
+LtFootSnd2					= ""
+SnowmobileSnd1				= ""
+SnowmobileSnd2				= ""
+BodyFallSnd					= ""
+BodyFallSndRadius			= 0
+BodyLedgeFallSnd			= ""
+BodyLedgeFallSndRadius		= 0
+ActivationSnd				= ""
+ActivationSndRadius			= 0.0
+DeathNoiseMod				= 0.0
+MoveNoiseMod				= 0.0
+ImpactNoiseMod				= 0.0
+Hardness					= 0.1
+SnowmobileVelMult			= 1.0
+Magnetic					= 0
+ImpactFXName				= ""
+UWImpactFXName				= ""
+ExitFXName					= ""
+UWExitFXName				= ""
+
+[Surface8]
+
+Name						= "brick"
+Id							= 68
+ShowsMark					= 1
+ShowBreath					= 0
+CanSeeThrough				= 0
+CanShootThrough				= 0
+MaxShootThroughPerturb		= 0
+MaxShootThroughThickness	= 0
+BulletHoleSpr				= "FX\Test\IMarkBasic.spr"
+BulletHoleMinScale			= 0.800000
+BulletHoleMaxScale			= 1.500000
+BulletRangeDampen			= 1.000000
+BulletDamageDampen			= 1.000000
+BulletImpactSnd1			= "Guns\Snd\impacts\stone\impact1.wav"
+BulletImpactSnd2			= "Guns\Snd\impacts\stone\impact2.wav"
+ProjectileImpactSnd1		= "Guns\Snd\impacts\projectile\stone\impact1.wav"
+ProjectileImpactSnd2		= "Guns\Snd\impacts\projectile\stone\impact2.wav"
+MeleeImpactSnd1				= "Guns\Snd\impacts\melee\gen\impact1.wav"
+MeleeImpactSnd2				= "Guns\Snd\impacts\melee\gen\impact2.wav"
+ShellImpactSnd1				= "Guns\Snd\Shells\stone.wav"
+ShellSndRadius				= 200.0
+GrenadeImpactSnd			= "Guns\Snd\Impacts\stone\impactgrenade.wav"
+GrenadeSndRadius			= 1000.0
+RtFootPrintSpr				= ""
+LtFootPrintSpr				= ""
+FootPrintLifetime			= 10.0
+FootPrintScale				= <1.0, 1.0, 1.0>
+RtFootSnd1					= "Snd\footsteps_brick01a.wav"
+LtFootSnd1					= "Snd\footsteps_brick01b.wav"
+RtFootSnd2					= "Snd\footsteps_brick02a.wav"
+LtFootSnd2					= "Snd\footsteps_brick02b.wav"
+SnowmobileSnd1				= ""
+SnowmobileSnd2				= ""
+BodyFallSnd					= "Chars\Snd\FemaleBodyFall_Ground.wav"
+BodyFallSndRadius			= 800.000000
+BodyLedgeFallSnd			= "Chars\Snd\MaleBodyFall_Ground.wav"
+BodyLedgeFallSndRadius		= 1200.000000
+ActivationSnd				= ""
+ActivationSndRadius			= 0.000000
+DeathNoiseMod				= 1.000000
+MoveNoiseMod				= 2.000000
+ImpactNoiseMod				= 2.000000
+Hardness					= 0.65
+SnowmobileVelMult			= 1.0
+Magnetic					= 0
+ImpactFXName				= ""
+UWImpactFXName				= ""
+ExitFXName					= ""
+UWExitFXName				= ""
+
+
+[Surface9]
+
+Name						= "dirt"
+Id							= 76
+ShowsMark					= 1
+ShowBreath					= 0
+CanSeeThrough				= 0
+CanShootThrough				= 0
+MaxShootThroughPerturb		= 0
+MaxShootThroughThickness	= 0
+BulletHoleSpr				= "FX\Test\IMarkBasic.spr"
+BulletHoleMinScale			= 0.800000
+BulletHoleMaxScale			= 1.500000
+BulletRangeDampen			= 1.000000
+BulletDamageDampen			= 1.000000
+BulletImpactSnd1			= "Guns\Snd\impacts\stone\impact1.wav"
+BulletImpactSnd2			= "Guns\Snd\impacts\stone\impact2.wav"
+ProjectileImpactSnd1		= "Guns\Snd\impacts\projectile\stone\impact1.wav"
+ProjectileImpactSnd2		= "Guns\Snd\impacts\projectile\stone\impact2.wav"
+MeleeImpactSnd1				= "Guns\Snd\impacts\melee\gen\impact1.wav"
+MeleeImpactSnd2				= "Guns\Snd\impacts\melee\gen\impact2.wav"
+ShellImpactSnd1				= "Guns\Snd\Shells\stone.wav"
+ShellSndRadius				= 200.0
+GrenadeImpactSnd			= "Guns\Snd\Impacts\stone\impactgrenade.wav"
+GrenadeSndRadius			= 1000.0
+RtFootPrintSpr				= ""
+LtFootPrintSpr				= ""
+FootPrintLifetime			= 10.0
+FootPrintScale				= <1.0, 1.0, 1.0>
+RtFootSnd1					= "Snd\footsteps_dirt01a.wav"
+LtFootSnd1					= "Snd\footsteps_dirt01b.wav"
+RtFootSnd2					= "Snd\footsteps_dirt02a.wav"
+LtFootSnd2					= "Snd\footsteps_dirt02b.wav"
+SnowmobileSnd1				= ""
+SnowmobileSnd2				= ""
+BodyFallSnd					= "Chars\Snd\FemaleBodyFall_Ground.wav"
+BodyFallSndRadius			= 800.000000
+BodyLedgeFallSnd			= "Chars\Snd\MaleBodyFall_Ground.wav"
+BodyLedgeFallSndRadius		= 1200.000000
+ActivationSnd				= ""
+ActivationSndRadius			= 0.000000
+DeathNoiseMod				= 1.000000
+MoveNoiseMod				= 2.000000
+ImpactNoiseMod				= 2.000000
+Hardness					= 0.65
+SnowmobileVelMult			= 1.0
+Magnetic					= 0
+ImpactFXName				= ""
+UWImpactFXName				= ""
+ExitFXName					= ""
+UWExitFXName				= ""
+
+[Surface10]
+
+Name						= "mud"
+Id							= 70
+ShowsMark					= 1
+ShowBreath					= 0
+CanSeeThrough				= 0
+CanShootThrough				= 0
+MaxShootThroughPerturb		= 0
+MaxShootThroughThickness	= 0
+BulletHoleSpr				= "FX\Test\IMarkBasic.spr"
+BulletHoleMinScale			= 0.800000
+BulletHoleMaxScale			= 1.500000
+BulletRangeDampen			= 1.000000
+BulletDamageDampen			= 1.000000
+BulletImpactSnd1			= "Guns\Snd\impacts\stone\impact1.wav"
+BulletImpactSnd2			= "Guns\Snd\impacts\stone\impact2.wav"
+ProjectileImpactSnd1		= "Guns\Snd\impacts\projectile\stone\impact1.wav"
+ProjectileImpactSnd2		= "Guns\Snd\impacts\projectile\stone\impact2.wav"
+MeleeImpactSnd1				= "Guns\Snd\impacts\melee\gen\impact1.wav"
+MeleeImpactSnd2				= "Guns\Snd\impacts\melee\gen\impact2.wav"
+ShellImpactSnd1				= "Guns\Snd\Shells\stone.wav"
+ShellSndRadius				= 200.0
+GrenadeImpactSnd			= "Guns\Snd\Impacts\stone\impactgrenade.wav"
+GrenadeSndRadius			= 1000.0
+RtFootPrintSpr				= ""
+LtFootPrintSpr				= ""
+FootPrintLifetime			= 10.0
+FootPrintScale				= <1.0, 1.0, 1.0>
+RtFootSnd1					= "Snd\footsteps_mud01a.wav"
+LtFootSnd1					= "Snd\footsteps_mud01b.wav"
+RtFootSnd2					= "Snd\footsteps_mud02a.wav"
+LtFootSnd2					= "Snd\footsteps_mud02b.wav"
+SnowmobileSnd1				= ""
+SnowmobileSnd2				= ""
+BodyFallSnd					= "Chars\Snd\FemaleBodyFall_Ground.wav"
+BodyFallSndRadius			= 800.000000
+BodyLedgeFallSnd			= "Chars\Snd\MaleBodyFall_Ground.wav"
+BodyLedgeFallSndRadius		= 1200.000000
+ActivationSnd				= ""
+ActivationSndRadius			= 0.000000
+DeathNoiseMod				= 1.000000
+MoveNoiseMod				= 2.000000
+ImpactNoiseMod				= 2.000000
+Hardness					= 0.65
+SnowmobileVelMult			= 1.0
+Magnetic					= 0
+ImpactFXName				= ""
+UWImpactFXName				= ""
+ExitFXName					= ""
+UWExitFXName				= ""
+
+[Surface11]
+
+Name						= "grass"
+Id							= 73
+ShowsMark					= 1
+ShowBreath					= 0
+CanSeeThrough				= 0
+CanShootThrough				= 0
+MaxShootThroughPerturb		= 0
+MaxShootThroughThickness	= 0
+BulletHoleSpr				= "FX\Test\IMarkBasic.spr"
+BulletHoleMinScale			= 0.800000
+BulletHoleMaxScale			= 1.500000
+BulletRangeDampen			= 1.000000
+BulletDamageDampen			= 1.000000
+BulletImpactSnd1			= "Guns\Snd\impacts\stone\impact1.wav"
+BulletImpactSnd2			= "Guns\Snd\impacts\stone\impact2.wav"
+ProjectileImpactSnd1		= "Guns\Snd\impacts\projectile\stone\impact1.wav"
+ProjectileImpactSnd2		= "Guns\Snd\impacts\projectile\stone\impact2.wav"
+MeleeImpactSnd1				= "Guns\Snd\impacts\melee\gen\impact1.wav"
+MeleeImpactSnd2				= "Guns\Snd\impacts\melee\gen\impact2.wav"
+ShellImpactSnd1				= "Guns\Snd\Shells\stone.wav"
+ShellSndRadius				= 200.0
+GrenadeImpactSnd			= "Guns\Snd\Impacts\stone\impactgrenade.wav"
+GrenadeSndRadius			= 1000.0
+RtFootPrintSpr				= ""
+LtFootPrintSpr				= ""
+FootPrintLifetime			= 10.0
+FootPrintScale				= <1.0, 1.0, 1.0>
+RtFootSnd1					= "Snd\footsteps_grass01a.wav"
+LtFootSnd1					= "Snd\footsteps_grass01b.wav"
+RtFootSnd2					= "Snd\footsteps_grass02a.wav"
+LtFootSnd2					= "Snd\footsteps_grass02b.wav"
+SnowmobileSnd1				= ""
+SnowmobileSnd2				= ""
+BodyFallSnd					= "Chars\Snd\FemaleBodyFall_Ground.wav"
+BodyFallSndRadius			= 800.000000
+BodyLedgeFallSnd			= "Chars\Snd\MaleBodyFall_Ground.wav"
+BodyLedgeFallSndRadius		= 1200.000000
+ActivationSnd				= ""
+ActivationSndRadius			= 0.000000
+DeathNoiseMod				= 1.000000
+MoveNoiseMod				= 2.000000
+ImpactNoiseMod				= 2.000000
+Hardness					= 0.65
+SnowmobileVelMult			= 1.0
+Magnetic					= 0
+ImpactFXName				= ""
+UWImpactFXName				= ""
+ExitFXName					= ""
+UWExitFXName				= ""
+
+[Surface12]
+
+Name						= "ice"
+Id							= 69
+ShowsMark					= 1
+ShowBreath					= 0
+CanSeeThrough				= 0
+CanShootThrough				= 0
+MaxShootThroughPerturb		= 0
+MaxShootThroughThickness	= 0
+BulletHoleSpr				= "FX\Test\IMarkBasic.spr"
+BulletHoleMinScale			= 0.800000
+BulletHoleMaxScale			= 1.500000
+BulletRangeDampen			= 1.000000
+BulletDamageDampen			= 1.000000
+BulletImpactSnd1			= "Guns\Snd\impacts\stone\impact1.wav"
+BulletImpactSnd2			= "Guns\Snd\impacts\stone\impact2.wav"
+ProjectileImpactSnd1		= "Guns\Snd\impacts\projectile\stone\impact1.wav"
+ProjectileImpactSnd2		= "Guns\Snd\impacts\projectile\stone\impact2.wav"
+MeleeImpactSnd1				= "Guns\Snd\impacts\melee\gen\impact1.wav"
+MeleeImpactSnd2				= "Guns\Snd\impacts\melee\gen\impact2.wav"
+ShellImpactSnd1				= "Guns\Snd\Shells\stone.wav"
+ShellSndRadius				= 200.0
+GrenadeImpactSnd			= "Guns\Snd\Impacts\stone\impactgrenade.wav"
+GrenadeSndRadius			= 1000.0
+RtFootPrintSpr				= ""
+LtFootPrintSpr				= ""
+FootPrintLifetime			= 10.0
+FootPrintScale				= <1.0, 1.0, 1.0>
+RtFootSnd1					= "Snd\footsteps_ice01a.wav"
+LtFootSnd1					= "Snd\footsteps_ice01b.wav"
+RtFootSnd2					= "Snd\footsteps_ice02a.wav"
+LtFootSnd2					= "Snd\footsteps_ice02b.wav"
+SnowmobileSnd1				= ""
+SnowmobileSnd2				= ""
+BodyFallSnd					= "Chars\Snd\FemaleBodyFall_Ground.wav"
+BodyFallSndRadius			= 800.000000
+BodyLedgeFallSnd			= "Chars\Snd\MaleBodyFall_Ground.wav"
+BodyLedgeFallSndRadius		= 1200.000000
+ActivationSnd				= ""
+ActivationSndRadius			= 0.000000
+DeathNoiseMod				= 1.000000
+MoveNoiseMod				= 2.000000
+ImpactNoiseMod				= 2.000000
+Hardness					= 0.65
+SnowmobileVelMult			= 1.0
+Magnetic					= 0
+ImpactFXName				= ""
+UWImpactFXName				= ""
+ExitFXName					= ""
+UWExitFXName				= ""
+
+[Surface13]
+
+Name						= "snow"
+Id							= 71
+ShowsMark					= 1
+ShowBreath					= 0
+CanSeeThrough				= 0
+CanShootThrough				= 0
+MaxShootThroughPerturb		= 0
+MaxShootThroughThickness	= 0
+BulletHoleSpr				= "FX\Test\IMarkBasic.spr"
+BulletHoleMinScale			= 0.800000
+BulletHoleMaxScale			= 1.500000
+BulletRangeDampen			= 1.000000
+BulletDamageDampen			= 1.000000
+BulletImpactSnd1			= "Guns\Snd\impacts\stone\impact1.wav"
+BulletImpactSnd2			= "Guns\Snd\impacts\stone\impact2.wav"
+ProjectileImpactSnd1		= "Guns\Snd\impacts\projectile\stone\impact1.wav"
+ProjectileImpactSnd2		= "Guns\Snd\impacts\projectile\stone\impact2.wav"
+MeleeImpactSnd1				= "Guns\Snd\impacts\melee\gen\impact1.wav"
+MeleeImpactSnd2				= "Guns\Snd\impacts\melee\gen\impact2.wav"
+ShellImpactSnd1				= "Guns\Snd\Shells\stone.wav"
+ShellSndRadius				= 200.0
+GrenadeImpactSnd			= "Guns\Snd\Impacts\stone\impactgrenade.wav"
+GrenadeSndRadius			= 1000.0
+RtFootPrintSpr				= ""
+LtFootPrintSpr				= ""
+FootPrintLifetime			= 10.0
+FootPrintScale				= <1.0, 1.0, 1.0>
+RtFootSnd1					= "Snd\footsteps_snow01a.wav"
+LtFootSnd1					= "Snd\footsteps_snow01b.wav"
+RtFootSnd2					= "Snd\footsteps_snow02a.wav"
+LtFootSnd2					= "Snd\footsteps_snow02b.wav"
+SnowmobileSnd1				= ""
+SnowmobileSnd2				= ""
+BodyFallSnd					= "Chars\Snd\FemaleBodyFall_Ground.wav"
+BodyFallSndRadius			= 800.000000
+BodyLedgeFallSnd			= "Chars\Snd\MaleBodyFall_Ground.wav"
+BodyLedgeFallSndRadius		= 1200.000000
+ActivationSnd				= ""
+ActivationSndRadius			= 0.000000
+DeathNoiseMod				= 1.000000
+MoveNoiseMod				= 2.000000
+ImpactNoiseMod				= 2.000000
+Hardness					= 0.65
+SnowmobileVelMult			= 1.0
+Magnetic					= 0
+ImpactFXName				= ""
+UWImpactFXName				= ""
+ExitFXName					= ""
+UWExitFXName				= ""
+
+[Surface14]
+
+Name						= "water"
+Id							= 74
+ShowsMark					= 1
+ShowBreath					= 0
+CanSeeThrough				= 0
+CanShootThrough				= 0
+MaxShootThroughPerturb		= 0
+MaxShootThroughThickness	= 0
+BulletHoleSpr				= "FX\Test\IMarkBasic.spr"
+BulletHoleMinScale			= 0.800000
+BulletHoleMaxScale			= 1.500000
+BulletRangeDampen			= 1.000000
+BulletDamageDampen			= 1.000000
+BulletImpactSnd1			= "Guns\Snd\impacts\stone\impact1.wav"
+BulletImpactSnd2			= "Guns\Snd\impacts\stone\impact2.wav"
+ProjectileImpactSnd1		= "Guns\Snd\impacts\projectile\stone\impact1.wav"
+ProjectileImpactSnd2		= "Guns\Snd\impacts\projectile\stone\impact2.wav"
+MeleeImpactSnd1				= "Guns\Snd\impacts\melee\gen\impact1.wav"
+MeleeImpactSnd2				= "Guns\Snd\impacts\melee\gen\impact2.wav"
+ShellImpactSnd1				= "Guns\Snd\Shells\stone.wav"
+ShellSndRadius				= 200.0
+GrenadeImpactSnd			= "Guns\Snd\Impacts\stone\impactgrenade.wav"
+GrenadeSndRadius			= 1000.0
+RtFootPrintSpr				= ""
+LtFootPrintSpr				= ""
+FootPrintLifetime			= 10.0
+FootPrintScale				= <1.0, 1.0, 1.0>
+RtFootSnd1					= "Snd\footsteps_water01a.wav"
+LtFootSnd1					= "Snd\footsteps_water01b.wav"
+RtFootSnd2					= "Snd\footsteps_water02a.wav"
+LtFootSnd2					= "Snd\footsteps_water02b.wav"
+SnowmobileSnd1				= ""
+SnowmobileSnd2				= ""
+BodyFallSnd					= "Chars\Snd\FemaleBodyFall_Ground.wav"
+BodyFallSndRadius			= 800.000000
+BodyLedgeFallSnd			= "Chars\Snd\MaleBodyFall_Ground.wav"
+BodyLedgeFallSndRadius		= 1200.000000
+ActivationSnd				= ""
+ActivationSndRadius			= 0.000000
+DeathNoiseMod				= 1.000000
+MoveNoiseMod				= 2.000000
+ImpactNoiseMod				= 2.000000
+Hardness					= 0.65
+SnowmobileVelMult			= 1.0
+Magnetic					= 0
+ImpactFXName				= ""
+UWImpactFXName				= ""
+ExitFXName					= ""
+UWExitFXName				= ""
+
+[Surface15]
+
+Name						= "wood"
+Id							= 30
+ShowsMark					= 1
+ShowBreath					= 0
+CanSeeThrough				= 0
+CanShootThrough				= 0
+MaxShootThroughPerturb		= 0
+MaxShootThroughThickness	= 0
+BulletHoleSpr				= "FX\Test\IMarkBasic.spr"
+BulletHoleMinScale			= 0.800000
+BulletHoleMaxScale			= 1.500000
+BulletRangeDampen			= 1.000000
+BulletDamageDampen			= 1.000000
+BulletImpactSnd1			= "Guns\Snd\impacts\stone\impact1.wav"
+BulletImpactSnd2			= "Guns\Snd\impacts\stone\impact2.wav"
+ProjectileImpactSnd1		= "Guns\Snd\impacts\projectile\stone\impact1.wav"
+ProjectileImpactSnd2		= "Guns\Snd\impacts\projectile\stone\impact2.wav"
+MeleeImpactSnd1				= "Guns\Snd\impacts\melee\gen\impact1.wav"
+MeleeImpactSnd2				= "Guns\Snd\impacts\melee\gen\impact2.wav"
+ShellImpactSnd1				= "Guns\Snd\Shells\stone.wav"
+ShellSndRadius				= 200.0
+GrenadeImpactSnd			= "Guns\Snd\Impacts\stone\impactgrenade.wav"
+GrenadeSndRadius			= 1000.0
+RtFootPrintSpr				= ""
+LtFootPrintSpr				= ""
+FootPrintLifetime			= 10.0
+FootPrintScale				= <1.0, 1.0, 1.0>
+RtFootSnd1					= "Snd\footsteps_wood01a.wav"
+LtFootSnd1					= "Snd\footsteps_wood01b.wav"
+RtFootSnd2					= "Snd\footsteps_wood02a.wav"
+LtFootSnd2					= "Snd\footsteps_wood02b.wav"
+SnowmobileSnd1				= ""
+SnowmobileSnd2				= ""
+BodyFallSnd					= "Chars\Snd\FemaleBodyFall_Ground.wav"
+BodyFallSndRadius			= 800.000000
+BodyLedgeFallSnd			= "Chars\Snd\MaleBodyFall_Ground.wav"
+BodyLedgeFallSndRadius		= 1200.000000
+ActivationSnd				= ""
+ActivationSndRadius			= 0.000000
+DeathNoiseMod				= 1.000000
+MoveNoiseMod				= 2.000000
+ImpactNoiseMod				= 2.000000
+Hardness					= 0.65
+SnowmobileVelMult			= 1.0
+Magnetic					= 0
+ImpactFXName				= ""
+UWImpactFXName				= ""
+ExitFXName					= ""
+UWExitFXName				= ""
+
+[Surface16]
+
+Name						= "stone"
+Id							= 75
+ShowsMark					= 1
+ShowBreath					= 0
+CanSeeThrough				= 0
+CanShootThrough				= 0
+MaxShootThroughPerturb		= 0
+MaxShootThroughThickness	= 0
+BulletHoleSpr				= "FX\Test\IMarkBasic.spr"
+BulletHoleMinScale			= 0.800000
+BulletHoleMaxScale			= 1.500000
+BulletRangeDampen			= 1.000000
+BulletDamageDampen			= 1.000000
+BulletImpactSnd1			= "Guns\Snd\impacts\stone\impact1.wav"
+BulletImpactSnd2			= "Guns\Snd\impacts\stone\impact2.wav"
+ProjectileImpactSnd1		= "Guns\Snd\impacts\projectile\stone\impact1.wav"
+ProjectileImpactSnd2		= "Guns\Snd\impacts\projectile\stone\impact2.wav"
+MeleeImpactSnd1				= "Guns\Snd\impacts\melee\gen\impact1.wav"
+MeleeImpactSnd2				= "Guns\Snd\impacts\melee\gen\impact2.wav"
+ShellImpactSnd1				= "Guns\Snd\Shells\stone.wav"
+ShellSndRadius				= 200.0
+GrenadeImpactSnd			= "Guns\Snd\Impacts\stone\impactgrenade.wav"
+GrenadeSndRadius			= 1000.0
+RtFootPrintSpr				= ""
+LtFootPrintSpr				= ""
+FootPrintLifetime			= 10.0
+FootPrintScale				= <1.0, 1.0, 1.0>
+RtFootSnd1					= "Snd\footsteps_stone01a.wav"
+LtFootSnd1					= "Snd\footsteps_stone01b.wav"
+RtFootSnd2					= "Snd\footsteps_stone02a.wav"
+LtFootSnd2					= "Snd\footsteps_stone02b.wav"
+SnowmobileSnd1				= ""
+SnowmobileSnd2				= ""
+BodyFallSnd					= "Chars\Snd\FemaleBodyFall_Ground.wav"
+BodyFallSndRadius			= 800.000000
+BodyLedgeFallSnd			= "Chars\Snd\MaleBodyFall_Ground.wav"
+BodyLedgeFallSndRadius		= 1200.000000
+ActivationSnd				= ""
+ActivationSndRadius			= 0.000000
+DeathNoiseMod				= 1.000000
+MoveNoiseMod				= 2.000000
+ImpactNoiseMod				= 2.000000
+Hardness					= 0.65
+SnowmobileVelMult			= 1.0
+Magnetic					= 0
+ImpactFXName				= ""
+UWImpactFXName				= ""
+ExitFXName					= ""
+UWExitFXName				= ""
+
+[Surface17]
+
+Name						= "grave"
+Id							= 72
+ShowsMark					= 1
+ShowBreath					= 0
+CanSeeThrough				= 0
+CanShootThrough				= 0
+MaxShootThroughPerturb		= 0
+MaxShootThroughThickness	= 0
+BulletHoleSpr				= "FX\Test\IMarkBasic.spr"
+BulletHoleMinScale			= 0.800000
+BulletHoleMaxScale			= 1.500000
+BulletRangeDampen			= 1.000000
+BulletDamageDampen			= 1.000000
+BulletImpactSnd1			= "Guns\Snd\impacts\stone\impact1.wav"
+BulletImpactSnd2			= "Guns\Snd\impacts\stone\impact2.wav"
+ProjectileImpactSnd1		= "Guns\Snd\impacts\projectile\stone\impact1.wav"
+ProjectileImpactSnd2		= "Guns\Snd\impacts\projectile\stone\impact2.wav"
+MeleeImpactSnd1				= "Guns\Snd\impacts\melee\gen\impact1.wav"
+MeleeImpactSnd2				= "Guns\Snd\impacts\melee\gen\impact2.wav"
+ShellImpactSnd1				= "Guns\Snd\Shells\stone.wav"
+ShellSndRadius				= 200.0
+GrenadeImpactSnd			= "Guns\Snd\Impacts\stone\impactgrenade.wav"
+GrenadeSndRadius			= 1000.0
+RtFootPrintSpr				= ""
+LtFootPrintSpr				= ""
+FootPrintLifetime			= 10.0
+FootPrintScale				= <1.0, 1.0, 1.0>
+RtFootSnd1					= "Snd\footsteps_gravel01a.wav"
+LtFootSnd1					= "Snd\footsteps_gravel01b.wav"
+RtFootSnd2					= "Snd\footsteps_gravel02a.wav"
+LtFootSnd2					= "Snd\footsteps_gravel02b.wav"
+SnowmobileSnd1				= ""
+SnowmobileSnd2				= ""
+BodyFallSnd					= "Chars\Snd\FemaleBodyFall_Ground.wav"
+BodyFallSndRadius			= 800.000000
+BodyLedgeFallSnd			= "Chars\Snd\MaleBodyFall_Ground.wav"
+BodyLedgeFallSndRadius		= 1200.000000
+ActivationSnd				= ""
+ActivationSndRadius			= 0.000000
+DeathNoiseMod				= 1.000000
+MoveNoiseMod				= 2.000000
+ImpactNoiseMod				= 2.000000
+Hardness					= 0.65
+SnowmobileVelMult			= 1.0
+Magnetic					= 0
+ImpactFXName				= ""
+UWImpactFXName				= ""
+ExitFXName					= ""
+UWExitFXName				= ""
+
+
+
+
+
+//
+// END OF THE PRE-DEFINED SURFACES - DO NOT MODIFY THESE!!!! -
+/////////////////////////////////////////////////////////////////////////////

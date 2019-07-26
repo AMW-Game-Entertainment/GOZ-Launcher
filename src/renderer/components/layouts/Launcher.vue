@@ -112,6 +112,7 @@ export default {
         .then((files) => {
           this.filesOnServer = files
           this.filesToBeDownloaded = files
+          return this.CheckNotExistingDir()
         })
         // Get local files
         .then(() => {
@@ -175,7 +176,23 @@ export default {
      * Refactor the files path
      */
     refatorFilesPath(files) {
+      console.log(files)
       return files.map((path) => path.replace(`${config.appGameClientPath}\\`, '', path))
+    },
+    /**
+     * Check if dirs exist, if not create
+     */
+    CheckNotExistingDir() {
+      this.filesOnServer.map((fileInfo) => {
+        console.log(fileInfo)
+        const fileFullPath = join(config.appGameClientPath, fileInfo.pathToFile)
+        const dir = fileFullPath.replace(basename(fileFullPath), '', fileFullPath)
+        console.log(dir, fileFullPath)
+        if (dir && !fs.existsSync(dir)) {
+          fs.mkdirSync(dir)
+        }
+        return fileInfo
+      })
     },
     /**
      * Compare server files with local files
@@ -202,14 +219,14 @@ export default {
             })
           // else means this file is deprecated and must be deleted
           } else {
-            // get the stat to know if deleteing a dir or file
-            const fileStat = fs.lstatSync(fullPath)
-            // delete this local file/dir
-            if (fileStat.isDirectory()) {
-              fs.rmdirSync(fullPath)
-            } else if (fileStat.isFile()) {
-              fs.unlinkSync(fullPath)
-            }
+            // // get the stat to know if deleteing a dir or file
+            // const fileStat = fs.lstatSync(fullPath)
+            // // delete this local file/dir
+            // if (fileStat.isDirectory()) {
+            //   fs.rmdirSync(fullPath)
+            // } else if (fileStat.isFile()) {
+            //   fs.unlinkSync(fullPath)
+            // }
           }
         })
       }
