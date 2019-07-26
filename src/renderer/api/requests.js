@@ -1,4 +1,6 @@
-import Vue from 'vue'
+import axios from 'axios'
+import request from 'request'
+import progress from 'request-progress'
 import {
   event as gaEvent
 } from 'vue-analytics'
@@ -9,7 +11,7 @@ export default {
    * Get config
    */
   getConfig() {
-    return Vue.http.get(config.endpoint + '/api/v1/config').then(({
+    return axios.get(config.endpoint + '/api/v1/config').then(({
       data
     }) => data)
   },
@@ -17,7 +19,7 @@ export default {
    * Get total online
    */
   getTotalInGameOnline() {
-    return Vue.http.get(config.endpoint + '/api/v1/total-online-ingame').then(({
+    return axios.get(config.endpoint + '/api/v1/total-online-ingame').then(({
       data
     }) => {
       // track event
@@ -29,7 +31,7 @@ export default {
    * Get downloads list
    */
   getDownloadList(url) {
-    return Vue.http.get(url)
+    return axios.get(url)
       .then(({
         data
       }) => {
@@ -38,12 +40,14 @@ export default {
         return data
       })
   },
-  downloadAsStream(fileSvrPath, onDownloadProgress) {
-    return Vue.http({
-      url: fileSvrPath,
-      method: 'get',
-      responseType: 'blob',
-      onDownloadProgress
+  downloadAsStream(fileSvrPath) {
+    // eslint-disable-next-line no-return-await
+    return progress(request.get(fileSvrPath, {
+      /* GZIP true for most of the websites now, disable it if you don't need it */
+      gzip: true
+    }), {
+      throttle: 60000, // Throttle the progress event, defaults to 1000ms
+      delay: 0 // Only start to emit after a delay of some milliseconds - default is 0ms
     })
   }
 }

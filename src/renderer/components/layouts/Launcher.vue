@@ -37,7 +37,7 @@
               </v-flex>
             </v-layout>
             <v-progress-linear
-              :value="Math.ceil(downloadingProgress.at)"
+              :value="downloadingProgress.at"
               height="5"
               color="accent"
               striped
@@ -64,27 +64,32 @@ import fs from 'fs'
 import { fromFile as fromFileHash } from 'hasha'
 import { basename, join } from 'path'
 import requests from '@/api/requests'
-import { getConfig, getDownloadingProgress } from '@/store/selectors'
+import { getConfig } from '@/store/selectors'
 import config from '@/constants/config'
-import actions from '@/store/actions'
 
 export default {
   name: 'launcher',
   data: () => ({
     checkingProgress: 5,
+    downloadingProgress: {
+      at: 0,
+      filePath: '',
+      error: false,
+      done: false
+    },
     filesToBeDownloaded: [],
     filesOnServer: [],
     filesOnLocal: []
   }),
   computed: {
     ...mapState({
-      config: (state) => getConfig(state, 'gameLauncher'),
-      downloadingProgress: (state) => getDownloadingProgress(state)
+      config: (state) => getConfig(state, 'gameLauncher')
     }),
     downloadingLabel() {
-      if (this.downloadingProgress.at === 0) {
-        return `--`
-      }
+      console.log(this.downloadingProgress.at)
+      // if (this.downloadingProgress.at === 0) {
+      //   return `--`
+      // }
       if (this.downloadingProgress.error) {
         this.DownloadFiles()
         return `Unable to download the file...`
@@ -209,43 +214,64 @@ export default {
         })
       }
     },
-    onDownloadProgress(progressEvent) {
-      const progress = progressEvent.loaded // Math.floor((progressEvent.loaded * 100))
-      actions.downloadProgress({
-        at: progress
-      })
-    },
     DownloadFiles() {
       if (this.filesToBeDownloaded.length) {
-        let downloaded = 0
         const fileInfo = this.filesToBeDownloaded[0]
-        const pathToLocal = `${config.appGameClientPath}\\${fileInfo.pathToFile}`
+        const pathToLocal = join(config.appGameClientPath, fileInfo.pathToFile)
         console.log(pathToLocal)
-        actions.downloadProgress({
-          at: downloaded,
-          filePath: fileInfo.pathToFile,
-          error: false,
-          done: false
-        })
-        const response = requests.downloadAsStream(fileInfo.urlPath, this.onDownloadProgress)
-        console.log('res', response.data)
-        response.data.pipe(fs.createWriteStream(pathToLocal))
-        response.data.on('finish', () => {
-          actions.downloadProgress({
-            at: 100,
-            error: false,
-            done: true
+        requests.downloadAsStream(fileInfo.urlPath)
+          .on('progress', (state) => {
+            // The state is an object that looks like this:
+            // {
+            //     percent: 0.5,               // Overall percent (between 0 to 1)
+            //     speed: 554732,              // The download speed in bytes/sec
+            //     size: {
+            //         total: 90044871,        // The total payload size in bytes
+            //         transferred: 27610959   // The transferred payload size in bytes
+            //     },
+            //     time: {
+            //         elapsed: 36.235,        // The total elapsed seconds since the start (3 decimals)
+            //         remaining: 81.403       // The remaining seconds to finish (3 decimals)
+            //     }
+            // }
+            this.downloadingProgress = {
+              ...this.downloadingProgress,
+              at: Math.floor((state.size.transferred * 100) / state.size.total),
+              error: false,
+              done: false
+            }
+            console.log('progress', state)
           })
-          this.filesToBeDownloaded.splice(0, 1)
-        })
-        response.data.on('error', () => {
-          actions.downloadProgress({
-            at: 100,
-            error: true,
-            done: false
+          .on('finish', () => {
+            this.downloadingProgress = {
+              ...this.downloadingProgress,
+              at: 0,
+              error: false,
+              done: true
+            }
+            this.filesToBeDownloaded.splice(0, 1)
           })
-          this.filesToBeDownloaded.splice(0, 1)
-        })
+          .on('end', () => {
+            this.downloadingProgress = {
+              ...this.downloadingProgress,
+              at: 0,
+              error: false,
+              done: true
+            }
+            this.filesToBeDownloaded.splice(0, 1)
+          })
+          .pipe(fs.createWriteStream(pathToLocal, {
+            flags: 'w+'
+          }))
+          .on('error', () => {
+            this.downloadingProgress = {
+              ...this.downloadingProgress,
+              at: 0,
+              error: true,
+              done: false
+            }
+            this.filesToBeDownloaded.splice(0, 1)
+          })
       }
     }
   }

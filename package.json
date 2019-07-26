@@ -33,6 +33,7 @@
     "hasha": "^5.0.0",
     "jquery": "^3.4.1",
     "popper.js": "^1.15.0",
+    "request-progress": "^3.0.0",
     "vee-validate": "^2.2.13",
     "vue": "^2.5.16",
     "vue-analytics": "^5.17.0",
