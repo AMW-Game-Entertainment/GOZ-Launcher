@@ -1,5 +1,4 @@
 import axios from 'axios'
-import adapter from 'axios/lib/adapters/xhr'
 import {
   event as gaEvent
 } from 'vue-analytics'
@@ -42,8 +41,7 @@ export default {
   downloadAsStream(fileSvrPath, onDownloadProgress) {
     return axios.get(fileSvrPath, {
       onDownloadProgress,
-      responseType: 'stream',
-      adapter
+      responseType: 'stream'
     })
   }
 }

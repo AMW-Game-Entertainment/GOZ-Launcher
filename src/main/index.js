@@ -2,6 +2,10 @@
 
 import { app, BrowserWindow, ipcMain } from 'electron'
 import '../renderer/store'
+import axios from 'axios'
+import fs from 'fs'
+import adapter from 'axios/lib/adapters/http'
+
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -28,18 +32,37 @@ function createWindow () {
     movable: false,
     frame: false,
     titleBarStyle: 'hidden',
-    width: 930
+    width: 930,
+    nodeIntegration: true,
+    webPreferences: {
+      nodeIntegration: true,
+      backgroundThrottling: false
+    }
   })
 
   mainWindow.loadURL(winURL)
 
-  ipcMain.on('download', (event, arg) => {
-    // axios download code here
-    event.sender('downloaded', {
-      event, arg
+  // Send version to renderer
+  mainWindow.webContents.on('dom-ready', () => {
+    ipcMain.on('download', (event, arg) => {
+      console.log('download event', arg) // prints "ping"
+      event.sender.send('downloaded', 'pong')
+      axios.get(arg.urlPath, {
+        onDownloadProgress: (progressEvent) => {
+          event.sender.send('downloaded-progress', progressEvent)
+        },
+        responseType: 'stream',
+        adapter
+      })
+        .then((res) => {
+          res.data.pipe(fs.createWriteStream(arg.pathToLocal))
+          event.sender.send('downloaded-successful', arg)
+        })
+        .catch(() => {
+          event.sender.send('downloaded-failed', arg)
+        })
     })
   })
-
   mainWindow.on('closed', () => {
     mainWindow = null
   })

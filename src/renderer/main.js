@@ -7,6 +7,7 @@ import VeeValidate from 'vee-validate'
 import '@/plugins/i18n'
 import '@/plugins/vuetify'
 import '@/plugins/ga'
+import '@/plugins/eventBus'
 import OnLoad from '@/modules/onload.module.js'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {fas} from '@fortawesome/pro-solid-svg-icons'
@@ -20,9 +21,10 @@ import 'bootstrap/scss/bootstrap.scss'
 
 library.add(fas, far, fal) // Include needed icons.
 
-if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
+// if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
+Vue.use(require('vue-electron'))
 Vue.config.productionTip = false
-
+console.log(process.env.IS_WEB)
 Vue.use(VeeValidate, {
   inject: false
 })

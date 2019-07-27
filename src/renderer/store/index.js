@@ -5,8 +5,6 @@ import {
   createPersistedState
 } from 'vuex-electron'
 
-import getters from './getters'
-
 Vue.use(Vuex)
 
 const initialState = () => ({
@@ -61,6 +59,5 @@ export default new Vuex.Store({
     ] : []
     // createSharedMutations()
   ],
-  getters,
   strict: process.env.NODE_ENV !== 'production'
 })

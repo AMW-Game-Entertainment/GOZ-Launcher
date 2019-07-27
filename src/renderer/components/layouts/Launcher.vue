@@ -67,11 +67,43 @@ import { getConfig, getDownloadingProgress } from '@/store/selectors'
 import config from '@/constants/config'
 import actions from '@/store/actions'
 import ProgressUtil from '@/utils/Progress.utils'
-import { ipcRenderer } from 'electron'
 
 export default {
   name: 'launcher',
-  provide: ['$electron'],
+  mounted() {
+    this.$electron.ipcRenderer.on('downloaded-progress', (event, { loaded, total }) => {
+      console.log('progress', loaded, total) // prints "pong"
+      const percentage = ProgressUtil.toPercentage(loaded, total)
+      this.downloadingLabel = `Downloading...${this.downloadingProgress.filePath} | ${percentage}%`
+      actions.downloadProgress({
+        at: percentage
+      })
+    })
+    this.$electron.ipcRenderer.on('downloaded-failed', (event, arg) => {
+      console.log('failed', arg) // prints "pong"
+      this.downloadingLabel = `Unable to download ${this.downloadingProgress.filePath}...`
+      actions.downloadProgress({
+        at: 100,
+        error: false,
+        done: true
+      })
+      this.filesToBeDownloaded.splice(0, 1)
+      // download next file
+      setTimeout(() => this.DownloadFiles(), 500)
+    })
+    this.$electron.ipcRenderer.on('downloaded-successful', (event, arg) => {
+      console.log('successful', arg) // prints "pong"
+      this.downloadingLabel = `${this.downloadingProgress.filePath} Completed`
+      actions.downloadProgress({
+        at: 100,
+        error: false,
+        done: true
+      })
+      this.filesToBeDownloaded.splice(0, 1)
+      // download next file
+      setTimeout(() => this.DownloadFiles(), 500)
+    })
+  },
   data: () => ({
     checkingProgress: 5,
     filesToBeDownloaded: [],
@@ -227,48 +259,10 @@ export default {
           error: false,
           done: false
         })
-        const onDownloadProgress = (progressEvent) => {
-          const percentage = ProgressUtil.toPercentage(progressEvent.loaded, progressEvent.total)
-          this.downloadingLabel = `Downloading...${fileInfo.pathToFile} | ${percentage}%`
-          actions.downloadProgress({
-            at: percentage
-          })
-        }
-        ipcRenderer.send('download', {
+        this.$electron.ipcRenderer.send('download', {
           urlPath: fileInfo.urlPath,
-          pathToLocal,
-          onDownloadProgress
+          pathToLocal
         })
-        ipcRenderer.on('downloaded', (event, data) => {
-          console.log(event, data)
-        })
-        // console.log(this.$electron.remote.app)
-        // requests.downloadAsStream(fileInfo.urlPath, onDownloadProgress)
-        //   .then((res) => {
-        //     res.data.pipe(fs.createWriteStream(pathToLocal))
-        //     this.downloadingLabel = `${this.downloadingProgress.filePath} Completed`
-        //     currentProgress = 0
-        //     actions.downloadProgress({
-        //       at: 100,
-        //       error: false,
-        //       done: true
-        //     })
-        //     this.filesToBeDownloaded.splice(0, 1)
-        //     // download next file
-        //     setTimeout(() => this.DownloadFiles(), 500)
-        //   })
-        //   .catch((error) => {
-        //     console.log(error)
-        //     this.downloadingLabel = `Unable to download ${this.downloadingProgress.filePath}...`
-        //     actions.downloadProgress({
-        //       at: 0,
-        //       error: true,
-        //       done: false
-        //     })
-        //     this.filesToBeDownloaded.splice(0, 1)
-        //     // download next file
-        //     setTimeout(() => this.DownloadFiles(), 500)
-        //   })
       }
     }
   }
