@@ -1,10 +1,12 @@
 'use strict'
 
 import { app, BrowserWindow, ipcMain } from 'electron'
+import childProcess from 'child_process'
 import '../renderer/store'
 import axios from 'axios'
 import progress from 'progress-stream'
-import fs from 'fs'
+import { createWriteStream } from 'fs'
+import { autoUpdater } from 'electron-updater'
 
 /**
  * Set `__static` path to static files in production
@@ -22,6 +24,8 @@ const winURL = process.env.NODE_ENV === 'development'
 const CancelTokenSource = []
 
 function createWindow () {
+  // Check for game updates
+  if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
   /**
    * Initial window options
    */
@@ -45,8 +49,12 @@ function createWindow () {
   mainWindow.loadURL(winURL)
   // Send version to renderer
   mainWindow.webContents.on('dom-ready', () => {
-    ipcMain.on('cancel-request-token', () => {
+    ipcMain.once('cancel-request-token', () => {
       CancelTokenSource.map((cancelToken) => cancelToken.cancel('Canceling downloads'))
+    })
+    ipcMain.once('run-game', (event, { gameExe, clientPath }) => {
+      childProcess.exec(`cd ${clientPath} && start ${gameExe} -rez gods.art -rez scp.art -rez goz.art -rez scp.art -rez script.art -rez models.art 127.0.0.1 -rez  .. -rez .`)
+      app.quit()
     })
     ipcMain.on('download', (event, arg) => {
       const SourceToken = axios.CancelToken.source()
@@ -58,10 +66,9 @@ function createWindow () {
       })
 
       const onResponse = (res) => {
-        res.data.pipe(str).pipe(fs.createWriteStream(arg.pathToLocal))
+        res.data.pipe(str).pipe(createWriteStream(arg.pathToLocal))
 
         str.on('progress', (progressEvent) => {
-          console.log(Math.floor((progressEvent.transferred * 100) / res.headers['content-length']))
           event.sender.send('downloaded-progress', {
             percentage: Math.floor((progressEvent.transferred * 100) / res.headers['content-length'])
           })
@@ -109,15 +116,6 @@ app.on('activate', () => {
  * support auto updating. Code Signing with a valid certificate is required.
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-electron-builder.html#auto-updating
  */
-
-/*
-import { autoUpdater } from 'electron-updater'
-
 autoUpdater.on('update-downloaded', () => {
   autoUpdater.quitAndInstall()
 })
-
-app.on('ready', () => {
-  if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
-})
- */

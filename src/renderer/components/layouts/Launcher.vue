@@ -9,40 +9,44 @@
       <v-layout class="launcher-controls-container" row wrap>
         <v-flex xs9 sm9 md9 lg9 d-flex fill-height>
           <v-layout column class="pa-2">
-            <v-layout row ml-1 mr-1>
-              <v-flex xs6 sm6 md6 lg6 align-center text-left>
-                <div class="caption white--text">
-                  {{ CheckingLabel }}
-                  <strong>{{ checkingProgress > 0 ? `${checkingProgress}%` : '' }}</strong>
-                </div>
-              </v-flex>
-              <v-flex xs6 sm6 md6 lg6 align-center text-right>
-                <div class="caption white--text">Total files: {{ filesToBeDownloaded.length }}</div>
-              </v-flex>
+            <v-layout column>
+              <v-layout row ml-1 mr-1>
+                <v-flex xs6 sm6 md6 lg6 align-center text-left>
+                  <div class="caption white--text">
+                    {{ CheckingLabel }}
+                    <strong>{{ checkingProgress > 0 ? `${checkingProgress}%` : '' }}</strong>
+                  </div>
+                </v-flex>
+                <v-flex xs6 sm6 md6 lg6 align-center text-right>
+                  <div class="caption white--text">Total files: {{ filesToBeDownloaded.length }}</div>
+                </v-flex>
+              </v-layout>
+              <v-progress-linear
+                :value="checkingProgress"
+                height="5"
+                color="accent"
+                striped
+                text-center
+                class="launcher-checking-progress"
+              ></v-progress-linear>
             </v-layout>
-            <v-progress-linear
-              :value="checkingProgress"
-              height="5"
-              color="accent"
-              striped
-              text-center
-              class="launcher-checking-progress"
-            ></v-progress-linear>
-            <v-layout row ml-1 mr-1>
-              <v-flex xs12 sm12 md12 lg12 align-center text-left>
-                <div class="caption white--text">
-                  {{ downloadingLabel }}
-                </div>
-              </v-flex>
+            <v-layout column>
+              <v-layout row ml-1 mr-1>
+                <v-flex xs12 sm12 md12 lg12 align-center text-left>
+                  <div class="caption white--text">
+                    {{ downloadingLabel }}
+                  </div>
+                </v-flex>
+              </v-layout>
+              <v-progress-linear
+                :value="downloadingProgress.at"
+                height="5"
+                color="accent"
+                striped
+                text-center
+                class="launcher-downloading-progress"
+              ></v-progress-linear>
             </v-layout>
-            <v-progress-linear
-              :value="downloadingProgress.at"
-              height="5"
-              color="accent"
-              striped
-              text-center
-              class="launcher-downloading-progress"
-            ></v-progress-linear>
           </v-layout>
         </v-flex>
         <v-flex xs3 sm3 md3 lg3 align-center d-flex fill-height>
@@ -67,12 +71,14 @@ import requests from '@/api/requests'
 import { getConfig, getDownloadingProgress } from '@/store/selectors'
 import config from '@/constants/config'
 import actions from '@/store/actions'
+import FileUtils from '@/utils/File.utils'
 // import ProgressUtil from '@/utils/Progress.utils'
 
 export default {
   name: 'launcher',
   mounted() {
-    this.CheckingLabel = 'Nothing to download yet'
+    this.downloadingLabel = 'Naviagate through the site while the launcher is updating!'
+    this.CheckingLabel = 'Check out the news to learn what is coming up!'
     this.$electron.ipcRenderer.on('downloaded-progress', (event, { percentage = 0 }) => {
       this.downloadingLabel = `Downloading...${this.downloadingProgress.filePath} | ${percentage}%`
       actions.downloadProgress({
@@ -106,9 +112,10 @@ export default {
     filesToBeDownloaded: [],
     filesOnServer: [],
     filesOnLocal: [],
-    downloadingLabel: '',
-    CheckingLabel: '',
-    playButtonClciked: false
+    downloadingLabel: ' ',
+    CheckingLabel: ' ',
+    playButtonClciked: false,
+    gameLaunched: false
   }),
   computed: {
     ...mapState({
@@ -124,6 +131,8 @@ export default {
     onPlay() {
       // play button clicked
       this.playButtonClciked = true
+      // Checking label
+      this.CheckingLabel = `Starting to for updates...`
       // cancel all previous tokens requests
       this.$electron.ipcRenderer.send('cancel-request-token')
       // First get svr files that can be downloaded
@@ -219,7 +228,6 @@ export default {
     CompareFilesWithLocal() {
       // check if any files
       if (this.filesOnLocal.length) {
-        console.log(this.filesOnLocal)
         const filsOnSvrTotal = this.filesOnServer.length
         const filesOnLocalTotal = this.filesOnLocal.length
         let currentItem = 0
@@ -235,7 +243,7 @@ export default {
             // Checking label
             this.CheckingLabel = `Checking ${file}...`
             // get the stat to know if deleteing file
-            if (fs.lstatSync(fullPath).isFile()) {
+            if (fs.lstatSync(fullPath).isFile() && !FileUtils.isWhitelistFileOrFolder(fullPath)) {
               // delete this local file
               fs.unlinkSync(fullPath)
             }
@@ -252,7 +260,6 @@ export default {
               .then(({ valid, localFileHash, ServerFileHash }) => {
                 currentItem++
                 // than check if valid - means up to date
-                console.log(valid, localFileHash, ServerFileHash, this.filesToBeDownloaded.indexOf(fileInfo))
                 // than remove it from downloadable files list if hash is valid
                 if (valid) {
                   this.filesToBeDownloaded.splice(this.filesToBeDownloaded.indexOf(fileInfo), 1)
@@ -286,13 +293,21 @@ export default {
           urlPath: fileInfo.urlPath,
           pathToLocal
         })
+      } else {
+        this.RunGame()
       }
     },
     /**
      * Run the game
      */
-    RunGame(){
-      this.$electron.send('run-game')
+    RunGame() {
+      if (!this.gameLaunched) {
+        this.gameLaunched = true
+        this.$electron.ipcRenderer.send('run-game', {
+          gameExe: this.config.gameExe,
+          clientPath: config.appGameClientPath
+        })
+      }
     }
   }
 }

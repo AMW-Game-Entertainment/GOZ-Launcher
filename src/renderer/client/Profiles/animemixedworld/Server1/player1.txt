@@ -1,0 +1,132 @@
+[Functions]
+FreeFlyHint = 1
+ShowSimpleModel = 0
+CampFilter = 1
+MissionArrow = 1
+ShowCombatInfo = 1
+JXUIShow = 0
+RZUIShow = 0
+YZUIShow = 0
+ZXUIShow = 0
+LZUIShow = 0
+SocietyMemberUIShow = 0
+FriendUIShow = 0
+AllUIShow = 0
+SelfUIShow = 0
+MonstorNPCUIShow = 0
+OtherPlayerUIShow = 0
+PlayerShadow = 1
+OtherPlayerShadow = 0
+NPCShadow = 0
+RejectTeam = 0
+RejectTrade = 0
+ShowSystemMsg = 1
+ShowGetGold = 1
+ShowBattleBoxMsg = 1
+ShowGetExp = 1
+ShowGetGoods = 1
+ShowHeadBob = 1
+FlySwordBook = 1
+MouseMove = 1
+
+[Bindings]
+MoveForward = "W@ @ "
+Package = "B@ @ "
+Relation = "O@ @ "
+AutoSelect = "Q@ @ "
+CameraRestore = "P@ @ "
+MoveRight = "D@ @ "
+Prop = "C@ @ "
+ZoneMode = "X@ @ "
+MoveBackward = "S@ @ "
+MoveLeft = "A@ @ "
+Spellbook = "I@ @ "
+Task = "L@ @ "
+SwitchChannel = "TAB@ @ "
+Rest = "V@ @ "
+Fun6 = "##64@ @ "
+Fun7 = "##65@ @ "
+
+
+[Sound]
+SoundVolume = 75
+MusicVolume = 75
+SkillVolume = 75
+InterfaceVolume = 75
+SoundVolumeEnabled = 0
+MusicVolumeEnabled = 0 
+SkillVolumeEnabled = 0
+InterfaceVolumeEnabled = 0
+
+
+[display]
+ScreenDepth  = 32
+ScreenType  = 1
+ScreenWidth0 = 1024
+ScreenHeight0 = 768
+ScreenWidth1 = 800
+ScreenHeight1 = 600
+FogEnabled   = 1
+TextureDetialType = 2
+PlayerCartoonShader = 1
+OtherPlayerCartoonShader = 1
+NPCCartoonShader = 1
+TeammateRender = 1
+SocietyMemberRender = 1
+OtherPlayerRender = 1
+DetailRender = 1
+CartoonStyle = 1
+ScreenWidth = 1280
+ScreenHeight = 800
+ShortCut2Show = 1
+FxLOD= 1
+FxDistance= 1
+
+[misc]
+CG= 1
+Item = 1
+
+[tutorial]
+enable= 1
+tutorialstate0= "22548578308"
+tutorialstate1= "0"
+tutorialstate2= "0"
+tutorialstate3= "0"
+tutorialstate4= "0"
+tutorialstate5= "0"
+tutorialstate6= "0"
+tutorialstate7= "0"
+tutorialstate8= "0"
+tutorialstate9= "0"
+tutorialstate10= "0"
+tutorialstate11= "0"
+tutorialstate12= "0"
+tutorialstate13= "0"
+tutorialstate14= "0"
+tutorialstate15= "0"
+tutorialstate16= "0"
+tutorialstate17= "0"
+
+[chat]
+IsTop= 0
+StateTop= 4095
+StateBot= 4095
+
+[txt]
+101txt= "Target the nearest enemy"
+253txt= "Switch combat mode"
+164txt= "Rest"
+100txt= "Resume angle of view"
+156txt= "Invite"
+157txt= "Trade"
+1txt= "Move forward"
+2txt= "Move backward"
+4txt= "Move to the left"
+3txt= "Move to the right"
+57txt= "Character"
+55txt= "Backpack"
+58txt= "Spell"
+59txt= "Quest"
+56txt= "Social"
+[mission]
+IsMissionHint= 0
