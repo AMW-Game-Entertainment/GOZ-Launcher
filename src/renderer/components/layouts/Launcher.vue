@@ -12,8 +12,8 @@
             <v-layout row ml-1 mr-1>
               <v-flex xs6 sm6 md6 lg6 align-center text-left>
                 <div class="caption white--text">
-                  Checking...
-                  <strong>{{ checkingProgress }}%</strong>
+                  {{ CheckingLabel }}
+                  <strong>{{ checkingProgress > 0 ? `${checkingProgress}%` : '' }}</strong>
                 </div>
               </v-flex>
               <v-flex xs6 sm6 md6 lg6 align-center text-right>
@@ -62,7 +62,7 @@
 import { mapState } from 'vuex'
 import fs from 'fs'
 import { fromFile as fromFileHash } from 'hasha'
-import { basename, join } from 'path'
+import { basename, join, normalize } from 'path'
 import requests from '@/api/requests'
 import { getConfig, getDownloadingProgress } from '@/store/selectors'
 import config from '@/constants/config'
@@ -72,6 +72,7 @@ import actions from '@/store/actions'
 export default {
   name: 'launcher',
   mounted() {
+    this.CheckingLabel = 'Nothing to download yet'
     this.$electron.ipcRenderer.on('downloaded-progress', (event, { percentage = 0 }) => {
       this.downloadingLabel = `Downloading...${this.downloadingProgress.filePath} | ${percentage}%`
       actions.downloadProgress({
@@ -101,11 +102,12 @@ export default {
     })
   },
   data: () => ({
-    checkingProgress: 5,
+    checkingProgress: 0,
     filesToBeDownloaded: [],
     filesOnServer: [],
     filesOnLocal: [],
     downloadingLabel: '',
+    CheckingLabel: '',
     playButtonClciked: false
   }),
   computed: {
@@ -135,7 +137,7 @@ export default {
         .then(() => this.refatorFilesPath(this.getFilePaths(config.appGameClientPath)))
         // Compare file with local files
         .then((localFiles) => {
-          this.filesOnLocal.push(localFiles)
+          this.filesOnLocal = localFiles || []
           this.CompareFilesWithLocal()
         })
     },
@@ -176,8 +178,8 @@ export default {
      * From server get file info
      */
     ServerFileInfo(filePath) {
-      return this.filesOnServer
-        .find((fileInfo) => fileInfo.pathToFile === filePath) || {}
+      return this.filesToBeDownloaded
+        .find((fileInfo) => normalize(fileInfo.pathToFile) === normalize(filePath)) || {}
     },
     /**
      * Get folder and files
@@ -216,36 +218,48 @@ export default {
      */
     CompareFilesWithLocal() {
       // check if any files
-      if (this.filesOnLocal[0].length) {
-        console.log(this.filesOnLocal[0])
+      if (this.filesOnLocal.length) {
+        console.log(this.filesOnLocal)
+        const filsOnSvrTotal = this.filesOnServer.length
+        const filesOnLocalTotal = this.filesOnLocal.length
         let currentItem = 0
         // each file
-        this.filesOnLocal[0].forEach(async (file, index) => {
-          currentItem++
+        this.filesOnLocal.forEach(async (file, index) => {
           // full path to client and file
           const fullPath = `${config.appGameClientPath}\\${file}`
           const fileInfo = this.ServerFileInfo(file)
           // extract sum
           const { sum } = fileInfo
           if (!sum) {
-          // get the stat to know if deleteing file
-            // if (fs.lstatSync(fullPath).isFile()) {
-            // // delete this local file
-            //   fs.unlinkSync(fullPath)
-            // }
-            if (currentItem === this.filesOnLocal.length) {
+            currentItem++
+            // Checking label
+            this.CheckingLabel = `Checking ${file}...`
+            // get the stat to know if deleteing file
+            if (fs.lstatSync(fullPath).isFile()) {
+              // delete this local file
+              fs.unlinkSync(fullPath)
+            }
+            if (currentItem === filesOnLocalTotal) {
               this.DownloadFiles()
             }
           } else {
             this.Compare(fullPath, sum)
+              .then((res) => {
+                // Checking label
+                this.CheckingLabel = `Checking ${file}...`
+                return res
+              })
               .then(({ valid, localFileHash, ServerFileHash }) => {
+                currentItem++
                 // than check if valid - means up to date
                 console.log(valid, localFileHash, ServerFileHash, this.filesToBeDownloaded.indexOf(fileInfo))
                 // than remove it from downloadable files list if hash is valid
                 if (valid) {
                   this.filesToBeDownloaded.splice(this.filesToBeDownloaded.indexOf(fileInfo), 1)
+                  this.downloadingLabel = 'New updates on the way...'
+                  this.checkingProgress = (100 - Math.floor((this.filesToBeDownloaded.length * 100) / filsOnSvrTotal))
                 }
-                if (currentItem === this.filesOnLocal.length) {
+                if (currentItem === filesOnLocalTotal) {
                   this.DownloadFiles()
                 }
               })
@@ -258,6 +272,8 @@ export default {
      */
     DownloadFiles() {
       if (this.filesToBeDownloaded.length) {
+        this.checkingProgress = 100
+        this.downloadingLabel = 'Starting to download...'
         const fileInfo = this.filesToBeDownloaded[0]
         const pathToLocal = join(config.appGameClientPath, fileInfo.pathToFile)
         actions.downloadProgress({
@@ -271,6 +287,12 @@ export default {
           pathToLocal
         })
       }
+    },
+    /**
+     * Run the game
+     */
+    RunGame(){
+      this.$electron.send('run-game')
     }
   }
 }
