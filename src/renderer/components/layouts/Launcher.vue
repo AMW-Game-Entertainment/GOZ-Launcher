@@ -48,7 +48,8 @@
         <v-flex xs3 sm3 md3 lg3 align-center d-flex fill-height>
           <v-card flat tile class="launcher-options">
             <v-card-actions class="launcher-options-list">
-              <v-btn @click="onPlay()" color="secondary" block large>Play</v-btn>
+              <v-btn v-if="!playButtonClciked" @click="onPlay()" color="secondary" block large>Play</v-btn>
+              <v-btn v-if="playButtonClciked" color="accent" block large>Play</v-btn>
             </v-card-actions>
           </v-card>
         </v-flex>
@@ -66,40 +67,35 @@ import requests from '@/api/requests'
 import { getConfig, getDownloadingProgress } from '@/store/selectors'
 import config from '@/constants/config'
 import actions from '@/store/actions'
-import ProgressUtil from '@/utils/Progress.utils'
+// import ProgressUtil from '@/utils/Progress.utils'
 
 export default {
   name: 'launcher',
   mounted() {
-    this.$electron.ipcRenderer.on('downloaded-progress', (event, { loaded, total }) => {
-      console.log('progress', loaded, total) // prints "pong"
-      const percentage = ProgressUtil.toPercentage(loaded, total)
+    this.$electron.ipcRenderer.on('downloaded-progress', (event, { percentage = 0 }) => {
       this.downloadingLabel = `Downloading...${this.downloadingProgress.filePath} | ${percentage}%`
       actions.downloadProgress({
         at: percentage
       })
     })
     this.$electron.ipcRenderer.on('downloaded-failed', (event, arg) => {
-      console.log('failed', arg) // prints "pong"
       this.downloadingLabel = `Unable to download ${this.downloadingProgress.filePath}...`
+      this.filesToBeDownloaded.splice(this.filesToBeDownloaded.indexOf(this.ServerFileInfo(this.downloadingProgress.filePath)), 1)
       actions.downloadProgress({
         at: 100,
         error: false,
         done: true
-      })
-      this.filesToBeDownloaded.splice(0, 1)
-      // download next file
+      })// download next file
       setTimeout(() => this.DownloadFiles(), 500)
     })
     this.$electron.ipcRenderer.on('downloaded-successful', (event, arg) => {
-      console.log('successful', arg) // prints "pong"
       this.downloadingLabel = `${this.downloadingProgress.filePath} Completed`
+      this.filesToBeDownloaded.splice(this.filesToBeDownloaded.indexOf(this.ServerFileInfo(this.downloadingProgress.filePath)), 1)
       actions.downloadProgress({
         at: 100,
         error: false,
         done: true
       })
-      this.filesToBeDownloaded.splice(0, 1)
       // download next file
       setTimeout(() => this.DownloadFiles(), 500)
     })
@@ -109,7 +105,8 @@ export default {
     filesToBeDownloaded: [],
     filesOnServer: [],
     filesOnLocal: [],
-    downloadingLabel: ''
+    downloadingLabel: '',
+    playButtonClciked: false
   }),
   computed: {
     ...mapState({
@@ -123,6 +120,10 @@ export default {
      * On play btn clicked
      */
     onPlay() {
+      // play button clicked
+      this.playButtonClciked = true
+      // cancel all previous tokens requests
+      this.$electron.ipcRenderer.send('cancel-request-token')
       // First get svr files that can be downloaded
       this.getServerFiles()
         .then((files) => {
@@ -131,15 +132,12 @@ export default {
           return this.CheckNotExistingDir()
         })
         // Get local files
-        .then(() => {
-          return this.refatorFilesPath(this.getFilePaths(config.appGameClientPath))
-        })
+        .then(() => this.refatorFilesPath(this.getFilePaths(config.appGameClientPath)))
         // Compare file with local files
         .then((localFiles) => {
           this.filesOnLocal.push(localFiles)
-          return this.CompareFilesWithLocal()
+          this.CompareFilesWithLocal()
         })
-        .then(() => this.DownloadFiles())
     },
     /**
      * Get server files list that are allowed to be downloaded
@@ -167,8 +165,11 @@ export default {
      * Compare the hashsum between local and svr file
      */
     async Compare(filePath, sum) {
+      const localFileHash = String(await fromFileHash(filePath, {algorithm: 'sha1'})).trim()
       return {
-        valid: await fromFileHash(filePath, {algorithm: 'sha1'}) === sum
+        valid: localFileHash === String(sum).trim(),
+        localFileHash,
+        ServerFileHash: sum
       }
     },
     /**
@@ -213,34 +214,41 @@ export default {
     /**
      * Compare server files with local files
      */
-    async CompareFilesWithLocal() {
+    CompareFilesWithLocal() {
       // check if any files
       if (this.filesOnLocal[0].length) {
+        console.log(this.filesOnLocal[0])
+        let currentItem = 0
         // each file
-        await this.filesOnLocal[0].forEach((file) => {
+        this.filesOnLocal[0].forEach(async (file, index) => {
+          currentItem++
+          // full path to client and file
           const fullPath = `${config.appGameClientPath}\\${file}`
-          // get our current file from svr obj
           const fileInfo = this.ServerFileInfo(file)
           // extract sum
           const { sum } = fileInfo
-          // if sum exist
-          if (sum) {
-            // comparing the hash of current local file with file on svr
-            this.Compare(fullPath, sum).then(({ valid }) => {
-              // than check if valid - means up to date
-              if (valid) {
-                // than remove it from downloadable files list
-                this.filesToBeDownloaded.splice(this.filesToBeDownloaded.indexOf(fileInfo), 1)
-              }
-            })
-          // else means this file is deprecated and must be deleted
-          } else {
-            // get the stat to know if deleteing file
-            const fileStat = fs.lstatSync(fullPath)
-            // delete this local file/
-            if (fileStat.isFile()) {
-              fs.unlinkSync(fullPath)
+          if (!sum) {
+          // get the stat to know if deleteing file
+            // if (fs.lstatSync(fullPath).isFile()) {
+            // // delete this local file
+            //   fs.unlinkSync(fullPath)
+            // }
+            if (currentItem === this.filesOnLocal.length) {
+              this.DownloadFiles()
             }
+          } else {
+            this.Compare(fullPath, sum)
+              .then(({ valid, localFileHash, ServerFileHash }) => {
+                // than check if valid - means up to date
+                console.log(valid, localFileHash, ServerFileHash, this.filesToBeDownloaded.indexOf(fileInfo))
+                // than remove it from downloadable files list if hash is valid
+                if (valid) {
+                  this.filesToBeDownloaded.splice(this.filesToBeDownloaded.indexOf(fileInfo), 1)
+                }
+                if (currentItem === this.filesOnLocal.length) {
+                  this.DownloadFiles()
+                }
+              })
           }
         })
       }
@@ -250,12 +258,11 @@ export default {
      */
     DownloadFiles() {
       if (this.filesToBeDownloaded.length) {
-        let currentProgress = 0
         const fileInfo = this.filesToBeDownloaded[0]
         const pathToLocal = join(config.appGameClientPath, fileInfo.pathToFile)
         actions.downloadProgress({
           filePath: fileInfo.pathToFile,
-          at: currentProgress,
+          at: 0,
           error: false,
           done: false
         })

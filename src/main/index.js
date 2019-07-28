@@ -3,8 +3,8 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import '../renderer/store'
 import axios from 'axios'
+import progress from 'progress-stream'
 import fs from 'fs'
-import adapter from 'axios/lib/adapters/http'
 
 /**
  * Set `__static` path to static files in production
@@ -18,6 +18,8 @@ let mainWindow
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
+
+const CancelTokenSource = []
 
 function createWindow () {
   /**
@@ -41,35 +43,54 @@ function createWindow () {
   })
 
   mainWindow.loadURL(winURL)
-
   // Send version to renderer
   mainWindow.webContents.on('dom-ready', () => {
+    ipcMain.on('cancel-request-token', () => {
+      CancelTokenSource.map((cancelToken) => cancelToken.cancel('Canceling downloads'))
+    })
     ipcMain.on('download', (event, arg) => {
-      console.log('download event', arg) // prints "ping"
-      event.sender.send('downloaded', 'pong')
-      axios.get(arg.urlPath, {
-        onDownloadProgress: (progressEvent) => {
-          event.sender.send('downloaded-progress', progressEvent)
-        },
-        responseType: 'stream',
-        adapter
+      const SourceToken = axios.CancelToken.source()
+      CancelTokenSource.push(SourceToken)
+      const CurrentToken = CancelTokenSource.indexOf(SourceToken)
+
+      const str = progress({
+        time: 100 /* ms */
       })
-        .then((res) => {
-          res.data.pipe(fs.createWriteStream(arg.pathToLocal))
-          event.sender.send('downloaded-successful', arg)
+
+      const onResponse = (res) => {
+        res.data.pipe(str).pipe(fs.createWriteStream(arg.pathToLocal))
+
+        str.on('progress', (progressEvent) => {
+          console.log(Math.floor((progressEvent.transferred * 100) / res.headers['content-length']))
+          event.sender.send('downloaded-progress', {
+            percentage: Math.floor((progressEvent.transferred * 100) / res.headers['content-length'])
+          })
+          if (progressEvent.percentage === 100) {
+            event.sender.send('downloaded-successful', arg)
+          }
         })
-        .catch(() => {
-          event.sender.send('downloaded-failed', arg)
-        })
+      }
+      const onError = () => event.sender.send('downloaded-failed', arg)
+
+      axios({
+        method: 'GET',
+        url: arg.urlPath,
+        responseType: 'stream',
+        cancelToken: CurrentToken.token
+      })
+        .then(onResponse)
+        .catch(onError)
     })
   })
   mainWindow.on('closed', () => {
+    CancelTokenSource.map((cancelToken) => cancelToken.cancel('Canceling downloads'))
     mainWindow = null
   })
 }
 
 app.on('ready', createWindow)
 app.on('window-all-closed', () => {
+  CancelTokenSource.map((cancelToken) => cancelToken.cancel('Canceling downloads'))
   if (process.platform !== 'darwin') {
     app.quit()
   }
