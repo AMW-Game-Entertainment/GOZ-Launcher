@@ -6,7 +6,7 @@ import '../renderer/store'
 import axios from 'axios'
 import progress from 'progress-stream'
 import { createWriteStream } from 'fs'
-// import { autoUpdater } from 'electron-updater'
+import { autoUpdater } from 'electron-updater'
 
 /**
  * Set `__static` path to static files in production
@@ -20,9 +20,17 @@ let mainWindow
 
 const CancelTokenSource = []
 
+autoUpdater.setFeedURL({
+  provider: 'github',
+  owner: 'animemixedworldgithub',
+  protocol: 'https',
+  repo: 'GOZ-Launcher',
+  token: 'd581409c9ec687499549875a5ff4addf07c5b816'
+})
+
 function createWindow () {
   // Check for game updates
-  // if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
+  if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
   /**
    * Initial window options
    */
@@ -122,6 +130,6 @@ app.on('activate', () => {
  * support auto updating. Code Signing with a valid certificate is required.
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-electron-builder.html#auto-updating
  */
-// autoUpdater.on('update-downloaded', () => {
-//   autoUpdater.quitAndInstall()
-// })
+autoUpdater.on('update-downloaded', () => {
+  autoUpdater.quitAndInstall()
+})
