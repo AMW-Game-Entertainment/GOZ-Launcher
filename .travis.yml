@@ -37,13 +37,13 @@ install:
 - npm install -g xvfb-maybe
 - yarn
 deploy:
-  provider: releases
-  api_key: "$GHT_TOKEN"
-  file: "release"
+  provider: github
+  api_key: $GHT_TOKEN
+  file: "build"
   skip_cleanup: true
   on:
     tags: true
-    all_branches: master
+    all_branches: false
 script:
 #- xvfb-maybe node_modules/.bin/karma start test/unit/karma.conf.js
 #- yarn run pack && xvfb-maybe node_modules/.bin/mocha test/e2e
