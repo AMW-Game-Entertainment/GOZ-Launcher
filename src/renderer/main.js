@@ -41,5 +41,9 @@ export const app = onLoad
       components: { App },
       router,
       store,
-      template: '<App/>'
+      template: '<App/>',
+      mounted() {
+        // Prevent blank screen in Electron builds
+        this.$router.push('/')
+      }
     }).$mount('#app'))

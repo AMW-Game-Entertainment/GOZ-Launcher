@@ -7,6 +7,8 @@ import axios from 'axios'
 import progress from 'progress-stream'
 import { createWriteStream } from 'fs'
 import { autoUpdater } from 'electron-updater'
+import { join } from 'path'
+// import { format } from 'url'
 
 /**
  * Set `__static` path to static files in production
@@ -17,17 +19,10 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 let mainWindow
-
 const CancelTokenSource = []
-
-autoUpdater.setFeedURL({
-  provider: process.env.DEPLOY_PROVIDER,
-  owner: process.env.DEPLOY_OWNER,
-  protocol: process.env.DEPLOY_PROTOCOL,
-  repo: process.env.DEPLOY_REPO,
-  token: process.env.DEPLOY_TOKEN
-})
-
+const url = process.env.NODE_ENV === 'development'
+  ? `http://localhost:9080`
+  : `file://${join(__dirname, '/index.html')}`
 function createWindow () {
   // Check for game updates
   if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
@@ -44,23 +39,18 @@ function createWindow () {
     frame: false,
     // titleBarStyle: 'hidden',
     width: 930,
-    nodeIntegration: true
+    nodeIntegration: true,
     // webPreferences: {
     //   nodeIntegration: true,
     //   backgroundThrottling: false
-    // }
+    // },
+    icon: join(__static, 'icon.png'),
+    title: global.MIX_APP_NAME
   })
-
-  // mainWindow.loadURL(url.format({
-  //   pathname,
-  //   protocol: process.env.NODE_ENV === 'development' ? 'http://' : 'file:',
-  //   slashes: true
-  // }))
-  const protocol = process.env.NODE_ENV === 'development' ? 'http://' : 'file:'
-  const pathname = process.env.NODE_ENV === 'development'
-    ? `localhost:9080`
-    : `${__dirname}/index.html`
-  mainWindow.loadURL(protocol + pathname)
+  console.log(global.MIX_APP_NAME, process.env.MIX_APP_NAME)
+  mainWindow.loadURL(
+    url
+  )
   // Send version to renderer
   mainWindow.webContents.on('dom-ready', () => {
     ipcMain.once('cancel-request-token', () => {
