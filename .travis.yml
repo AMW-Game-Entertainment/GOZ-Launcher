@@ -29,7 +29,7 @@ before_install:
 install:
 #- export DISPLAY=':99.0'
 #- Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-- nvm install 7
+- nvm install 8
 - npm config set "@fortawesome:registry" https://npm.fontawesome.com/ 
 - npm config set "//npm.fontawesome.com/:_authToken" AD818211-5F7A-4F5C-BDD5-59D959B51536
 - curl -o- -L https://yarnpkg.com/install.sh | bash
