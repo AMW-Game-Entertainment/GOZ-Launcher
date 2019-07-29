@@ -21,11 +21,11 @@ let mainWindow
 const CancelTokenSource = []
 
 autoUpdater.setFeedURL({
-  provider: 'github',
-  owner: 'animemixedworldgithub',
-  protocol: 'https',
-  repo: 'GOZ-Launcher',
-  token: 'd581409c9ec687499549875a5ff4addf07c5b816'
+  provider: process.env.DEPLOY_PROVIDER,
+  owner: process.env.DEPLOY_OWNER,
+  protocol: process.env.DEPLOY_PROTOCOL,
+  repo: process.env.DEPLOY_REPO,
+  token: process.env.DEPLOY_TOKEN
 })
 
 function createWindow () {
