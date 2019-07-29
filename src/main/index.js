@@ -113,6 +113,10 @@ app.on('activate', () => {
   }
 })
 
+process.on('unhandledRejection', (error) => {
+  console.error(error)
+})
+
 /**
  * Auto Updater
  *
