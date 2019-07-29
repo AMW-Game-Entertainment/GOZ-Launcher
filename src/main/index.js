@@ -6,7 +6,7 @@ import '../renderer/store'
 import axios from 'axios'
 import progress from 'progress-stream'
 import { createWriteStream } from 'fs'
-import { autoUpdater } from 'electron-updater'
+// import { autoUpdater } from 'electron-updater'
 
 /**
  * Set `__static` path to static files in production
@@ -17,36 +17,42 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 let mainWindow
-const winURL = process.env.NODE_ENV === 'development'
-  ? `http://localhost:9080`
-  : `file://${__dirname}/index.html`
 
 const CancelTokenSource = []
 
 function createWindow () {
   // Check for game updates
-  if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
+  // if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
   /**
    * Initial window options
    */
   mainWindow = new BrowserWindow({
     height: 610,
-    useContentSize: true,
-    transparent: true,
+    // useContentSize: true,
+    // transparent: true,
     center: 1,
     resizable: false,
-    movable: false,
+    // movable: false,
     frame: false,
-    titleBarStyle: 'hidden',
+    // titleBarStyle: 'hidden',
     width: 930,
-    nodeIntegration: true,
-    webPreferences: {
-      nodeIntegration: true,
-      backgroundThrottling: false
-    }
+    nodeIntegration: true
+    // webPreferences: {
+    //   nodeIntegration: true,
+    //   backgroundThrottling: false
+    // }
   })
 
-  mainWindow.loadURL(winURL)
+  // mainWindow.loadURL(url.format({
+  //   pathname,
+  //   protocol: process.env.NODE_ENV === 'development' ? 'http://' : 'file:',
+  //   slashes: true
+  // }))
+  const protocol = process.env.NODE_ENV === 'development' ? 'http://' : 'file:'
+  const pathname = process.env.NODE_ENV === 'development'
+    ? `localhost:9080`
+    : `${__dirname}/index.html`
+  mainWindow.loadURL(protocol + pathname)
   // Send version to renderer
   mainWindow.webContents.on('dom-ready', () => {
     ipcMain.once('cancel-request-token', () => {
@@ -116,6 +122,6 @@ app.on('activate', () => {
  * support auto updating. Code Signing with a valid certificate is required.
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-electron-builder.html#auto-updating
  */
-autoUpdater.on('update-downloaded', () => {
-  autoUpdater.quitAndInstall()
-})
+// autoUpdater.on('update-downloaded', () => {
+//   autoUpdater.quitAndInstall()
+// })

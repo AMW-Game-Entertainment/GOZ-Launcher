@@ -2,7 +2,7 @@
   "name": "goz-gamelauncher",
   "version": "1.0.0",
   "description": "vue init simulatedgreg/electron-vue my-project",
-  "author": "Redeemer Pace",
+  "author": "AMW - Game & Entertainment",
   "scripts": {
     "build": "node .electron-vue/build.js && electron-builder",
     "build:dll": "webpack --progress --config .electron-vue/webpack.dll.config.js",
@@ -120,7 +120,7 @@
     "webpack-merge": "^4.1.3"
   },
   "build": {
-    "productName": "Gods of Zushin - Game Launcher",
+    "productName": "GozLuancher",
     "appId": "goz.fun.app",
     "directories": {
       "output": "build"

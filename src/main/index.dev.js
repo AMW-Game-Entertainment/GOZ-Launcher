@@ -10,7 +10,7 @@
 // Install `electron-debug` with `devtron`
 const { app } = require('electron')
 const { default: installExtension, VUEJS_DEVTOOLS } = require('electron-devtools-installer')
-require('electron-debug')({ showDevTools: true })
+require('electron-debug')({ showDevTools: process.env.NODE_ENV === 'development' })
 
 // Install `vue-devtools`
 app.on('ready', () => {
